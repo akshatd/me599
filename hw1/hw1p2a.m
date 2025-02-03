@@ -4,14 +4,14 @@ clc; clear; close all;
 
 %% load data
 
-p2a_data = load('hwk1_p2a.mat');
-% sound(p2a_data.piano_noisy, p2a_data.Fs);
+load('hwk1_p2a.mat');
+% sound(piano_noisy, Fs);
 
 %% analyze
 
 % do fft
-n = length(p2a_data.piano_noisy);
-piano_noisy_fft = fft(p2a_data.piano_noisy, n);
+n = length(piano_noisy);
+piano_noisy_fft = fft(piano_noisy, n);
 piano_noisy_psd = piano_noisy_fft.*conj(piano_noisy_fft)/n;
 
 % find piano freq band
@@ -24,7 +24,7 @@ noise_psd = noise_fft.*conj(noise_fft)/n;
 anti_noise = -ifft(noise_fft, 'symmetric');
 save('anti_noise.mat', 'anti_noise');
 
-piano_unnoised = p2a_data.piano_noisy + anti_noise;
+piano_unnoised = piano_noisy + anti_noise;
 
 figure;
 subplot(2,1,1);
@@ -39,5 +39,5 @@ xlabel('Frequency (Hz)');
 ylabel('Power');
 
 %% listen
-% sound(noise, p2a_data.Fs);
-sound(piano_unnoised, p2a_data.Fs);
+% sound(noise, Fs);
+sound(piano_unnoised, Fs);
