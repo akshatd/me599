@@ -4,7 +4,7 @@ data_name = {'anger','disgust','fear','happy','neutral','sadness','surprise'};
 data = []; tfiles(1) = 0; class = {};datak = [];
  
 for j = 1:no_classes
-    image_folder = ['.\KDEF_wavelet_data\',data_name{j} '\'];
+    image_folder = ['./KDEF_wavelet_data/',data_name{j} '/'];
     file_pattern = fullfile(image_folder, '*.png');
     image_files = dir(file_pattern);
     nfiles = length(image_files);
