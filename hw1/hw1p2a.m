@@ -1,4 +1,4 @@
-% ME599 HW1 Problem 2
+%% ME599 HW1 Problem 2a
 
 clc; clear; close all;
 
