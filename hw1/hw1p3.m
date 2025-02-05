@@ -123,8 +123,11 @@ best_pred = preds(p_opt, :);
 fprintf('3.d: Optimal number of principal components: %d\n', p_opt);
 
 % plot confusion matrix
+m = confusionmat(test_label, class_str(best_pred));
+fprintf('3.d: PCA Classification Accuracy: %.2f%%\n', sum(diag(m)) / sum(m, 'all') * 100);
+
 figure;
-confusionchart(test_label, class_str(best_pred), 'RowSummary', 'row-normalized', 'ColumnSummary', 'column-normalized');
+confusionchart(m, 'RowSummary', 'row-normalized', 'ColumnSummary', 'column-normalized');
 title('HW1 P3d: Confusion Matrix (Test Data)');
 
 %% Part 3e: Do LDA and get fisherfaces
@@ -220,6 +223,9 @@ best_pred = preds(f_opt, :);
 fprintf('3.f: Optimal number of fisherfaces: %d\n', f_opt);
 
 % plot confusion matrix
+m = confusionmat(test_label, class_str(best_pred));
+fprintf('3.f: LDA Classification Accuracy: %.2f%%\n', sum(diag(m)) / sum(m, 'all') * 100);
+
 figure;
-confusionchart(test_label, class_str(best_pred), 'RowSummary', 'row-normalized', 'ColumnSummary', 'column-normalized');
+confusionchart(m, 'RowSummary', 'row-normalized', 'ColumnSummary', 'column-normalized');
 title('HW1 P3f: Confusion Matrix (Test Data)');
