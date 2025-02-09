@@ -6,7 +6,7 @@ load('X_1.mat');
 load('X_2.mat');
 
 % augment data
-X_hat = [X_1, X_2; ones(1, size(X_1, 2) + size(X_2, 2))];
+X = [X_1, X_2; ones(1, size(X_1, 2) + size(X_2, 2))];
 
 % labels
 Z = [ones(1, size(X_1, 2)), -ones(1, size(X_2, 2))];
@@ -14,10 +14,10 @@ Z = [ones(1, size(X_1, 2)), -ones(1, size(X_2, 2))];
 %% P2a Perceptron
 W_hat_0 = rand(3, 1); % random weights
 options = optimoptions('fmincon', 'Display', 'iter', 'SpecifyObjectiveGradient', true);
-W_opt = fmincon(@(W) perceptronCostWGrad(X_hat, Z, W), W_hat_0, [],[],[],[],[],[],[], options); % optimize weights
+W_opt = fmincon(@(W) perceptronCostWGrad(X, Z, W), W_hat_0, [],[],[],[],[],[],[], options); % optimize weights
 
 % plot
-x1_min = min(X_hat(1, :)); x1_max = max(X_hat(1, :));
+x1_min = min(X(1, :)); x1_max = max(X(1, :));
 x1 = x1_min:0.01:x1_max;
 x2 = lineFromWights(W_opt, x1);
 
@@ -26,6 +26,7 @@ scatter(X_1(1, :), X_1(2, :), 'filled', 'DisplayName', 'Class 1');
 hold on;
 scatter(X_2(1, :), X_2(2, :), 'filled', 'DisplayName', 'Class 2');
 plot(x1, x2, '--', 'LineWidth', 1, 'DisplayName', 'Decision Boundary(Perceptron)');
+title('HW2 P2a: Separating hyperplane using Perceptron');
 legend('Location', 'best');
 
 %% P2b SVM
