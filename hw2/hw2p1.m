@@ -24,15 +24,24 @@ X1_mean = mean(X1); X2_mean = mean(X2);
 X1_std = std(X1); X2_std = std(X2);
 fprintf('HW2 P1: E[X1] = %.2f, E[X2] = %.2f\n', X1_mean, X2_mean);
 
+% get h using Silverman's rule of thumb
+% https://stats.stackexchange.com/questions/6670/which-is-the-formula-from-silverman-to-calculate-the-bandwidth-in-a-kernel-densi
+h1 = 1.06 * min(X1_std, iqr(X1)/1.349) / length(X1)^(-1/5);
+h2 = 1.06 * min(X2_std, iqr(X2)/1.349) / length(X2)^(-1/5);
+
 test = 9.9;
-P_X1 = MyNormpdf(test, X1_mean, X1_std) * 100;
-P_X2 = MyNormpdf(test, X2_mean, X2_std) * 100;
+P_X1 = parzWinPdf(X1, h1, test) * 100;
+P_X2 = parzWinPdf(X2, h2, test) * 100;
 fprintf('HW2 P1: P(X1) = %.2f, P(X2) = %.2f\n', P_X1, P_X2);
 
 % plot pdf estimates
 range = 0:0.01:max(X);
-X1_pdf = MyNormpdf(range, X1_mean, X1_std);
-X2_pdf = MyNormpdf(range, X2_mean, X2_std);
+X1_pdf = zeros(size(range));
+X2_pdf = zeros(size(range));
+for i = 1:length(range)
+	X1_pdf(i) = parzWinPdf(X1, h1, range(i));
+	X2_pdf(i) = parzWinPdf(X2, h2, range(i));
+end
 plot(range, X1_pdf, 'r', 'LineWidth', 2, 'DisplayName', 'Estimated PDF X1');
 plot(range, X2_pdf, 'b', 'LineWidth', 2, 'DisplayName', 'Estimated PDF X2');
 xline(test, 'k--', 'LineWidth', 1.5, 'DisplayName', "Test value, x=" + test);
@@ -40,8 +49,14 @@ xline(test, 'k--', 'LineWidth', 1.5, 'DisplayName', "Test value, x=" + test);
 title('HW2 P1: PDF Estimates with underlying data');
 legend('location', 'best');
 
-function prob = MyNormpdf(x, mu, sigma)
-prob = 1/(sigma*sqrt(2*pi)) * exp(-0.5*((x-mu)/sigma).^2);
+function prob = parzWinPdf(data, h, x)
+N = length(data);
+d = length(x);
+V = h^d;
+	function in_window = windowFn(u)
+		in_window = abs(u) < 0.5;
+	end
+prob = 1/N * sum(windowFn((data - x)/h))/V;
 end
 
 function [counts, edges] = myHistcounts(ax)
