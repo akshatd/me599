@@ -25,13 +25,28 @@ figure;
 scatter(X_1(1, :), X_1(2, :), 'filled', 'DisplayName', 'Class 1');
 hold on;
 scatter(X_2(1, :), X_2(2, :), 'filled', 'DisplayName', 'Class 2');
-plot(x1, x2, '--', 'LineWidth', 1, 'DisplayName', 'Decision Boundary(Perceptron)');
+plot(x1, x2, 'k', 'LineWidth', 1, 'DisplayName', 'Separating hyperplane(Perceptron)');
 title('HW2 P2a: Separating hyperplane using Perceptron');
 legend('Location', 'best');
 
 %% P2b SVM
-% W_hat_0 = rand(3, 1); % random weights
-% W_opt = fmincon(@(W) svmCost(X_hat, Z, W), W_hat_0); % optimize weights
+W_hat_0 = rand(3, 1); % random weights
+H = eye(3);
+% H(3, 3) = 0; % only penalize weights, not bias
+f = zeros(3, 1);
+A = -Z'.*X'; b = -ones(size(Z));
+W_opt = quadprog(H, f, A, b); % optimize weights
+
+% plot
+x2 = lineFromWights(W_opt, x1);
+
+figure;
+scatter(X_1(1, :), X_1(2, :), 'filled', 'DisplayName', 'Class 1');
+hold on;
+scatter(X_2(1, :), X_2(2, :), 'filled', 'DisplayName', 'Class 2');
+plot(x1, x2, 'k', 'LineWidth', 1, 'DisplayName', 'Separating hyperplane(SVM)');
+title('HW2 P2b: Separating hyperplane using SVM');
+legend('Location', 'best');
 
 %% P2a Perceptron Cost Function
 function [cost, grad] = perceptronCostWGrad(X, Z, W)
@@ -42,13 +57,6 @@ loss_cost = Z.*(W'*X); % loss function, -ve if misclassified
 cost = -sum(loss_cost(loss_cost < 0)); % want cost +ve if missclassified
 loss_grad = Z.*X;
 grad = -sum(loss_grad(:, loss_cost < 0), 2);
-end
-
-%% P2b SVM Cost Function
-function cost = svmCost(X, Z, W)
-% X: data (n x N)
-% Z: labels (N x 1)
-% W: weights (n x 1)
 end
 
 %% Function for plotting line from weights for decision boundary
