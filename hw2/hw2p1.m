@@ -25,9 +25,11 @@ X1_std = std(X1); X2_std = std(X2);
 fprintf('HW2 P1: E[X1] = %.2f, E[X2] = %.2f\n', X1_mean, X2_mean);
 
 % get h using Silverman's rule of thumb
-% https://stats.stackexchange.com/questions/6670/which-is-the-formula-from-silverman-to-calculate-the-bandwidth-in-a-kernel-densi
-h1 = 1.06 * min(X1_std, iqr(X1)/1.349) / length(X1)^(-1/5);
-h2 = 1.06 * min(X2_std, iqr(X2)/1.349) / length(X2)^(-1/5);
+% https://en.wikipedia.org/wiki/Kernel_density_estimation#A_rule-of-thumb_bandwidth_estimator
+% h1 = 0.9 * min(X1_std, iqr(X1)/1.34) / length(X1)^(-1/5);
+% h2 = 0.9 * min(X2_std, iqr(X2)/1.34) / length(X2)^(-1/5);
+h1 = 0.5;
+h2 = 0.5;
 
 test = 9.9;
 P_X1 = parzWinPdf(X1, h1, test) * 100;
@@ -53,10 +55,15 @@ function prob = parzWinPdf(data, h, x)
 N = length(data);
 d = length(x);
 V = h^d;
-	function in_window = windowFn(u)
+	function in_window = windowFnUnif(u)
+		% uniform window function
 		in_window = abs(u) < 0.5;
 	end
-prob = 1/N * sum(windowFn((data - x)/h))/V;
+	function in_window = windowFnGauss(u)
+		% gaussian window function
+		in_window = exp(-u.^2/2)/sqrt(2*pi);
+	end
+prob = 1/N * sum(windowFnGauss((data - x)/h))/V;
 end
 
 function [counts, edges] = myHistcounts(ax)
