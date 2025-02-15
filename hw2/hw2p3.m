@@ -73,26 +73,32 @@ end
 
 %% plot loss
 figure;
-title('HW2 P3 Loss vs Iteration');
 semilogy(loss_all);
-xlabel('Iteration');
-ylabel('Loss');
+title('HW2 P3(iii) Loss vs Iteration');
+xlabel('Gradient Descent Iteration');
+ylabel('Loss Function');
 
-%% testing
+%% confusion matrix on test data
 N_test = size(test_data, 2);
-correct = 0;
+yhats = zeros(N_test, 1);
 for i = 1:N_test
 	O1 = sig(W1'*test_data(:, i) + W1_0);
 	yhat = soft(W2'*O1 + W2_0);
 	[~, pred] = max(yhat);
-	[~, true_label] = max(test_label(:, i));
-	if pred == true_label
-		correct = correct + 1;
-	end
+	yhats(i) = pred;
+end
+y = zeros(N_test, 1);
+for i = 1:N_test
+	[~, idx] = max(test_label(:, i));
+	y(i) = idx;
 end
 
-accuracy = correct/N_test;
-fprintf('HW2 P3 Test Accuracy: %.2f%%\n', accuracy*100);
+figure;
+m = confusionmat(y, yhats);
+confusionchart(m, 'RowSummary', 'row-normalized', 'ColumnSummary', 'column-normalized');
+title('HW2 P3(iv): Confusion Chart (Test Data)');
+
+fprintf('HW2 P3(v): Average Classification Accuracy: %.2f%%\n', sum(diag(m)) / sum(m, 'all') * 100);
 
 function Y = soft(X)
 Y = exp(X)./ (sum(exp(X)));
