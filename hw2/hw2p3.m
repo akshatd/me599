@@ -20,10 +20,17 @@ N = size(train_data, 2);
 n_hidden = 100;
 
 rng(0);
-W1 = randn(n_x, n_hidden);
-W1_0 = randn(n_hidden, 1);
-W2 = randn(n_hidden, n_yhat);
-W2_0 = randn(n_yhat, 1);
+a = -0.5;
+b = 0.5;
+W1 = a + (b-a).*rand(n_x, n_hidden);
+W1_0 = a + (b-a).*rand(n_hidden, 1);
+W2 = a + (b-a).*rand(n_hidden, n_yhat);
+W2_0 = a + (b-a).*rand(n_yhat, 1);
+
+% W1 = randn(n_x, n_hidden);
+% W1_0 = randn(n_hidden, 1);
+% W2 = randn(n_hidden, n_yhat);
+% W2_0 = randn(n_yhat, 1);
 
 eta = 0.7; % learning rate
 
@@ -73,7 +80,7 @@ end
 
 %% plot loss
 figure;
-semilogy(loss_all);
+semilogy(loss_all, 'LineWidth', 2, 'Marker', 'x');
 title('HW2 P3(iii) Loss vs Iteration');
 xlabel('Gradient Descent Iteration');
 ylabel('Loss Function');
