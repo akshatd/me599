@@ -19,16 +19,17 @@ N = size(train_data, 2);
 
 n_hidden = 100;
 
+rng(0);
 W1 = randn(n_x, n_hidden);
 W1_0 = randn(n_hidden, 1);
 W2 = randn(n_hidden, n_yhat);
 W2_0 = randn(n_yhat, 1);
 
-eta = 0.1; % learning rate
+eta = 0.7; % learning rate
 
 %% training loop
 loss_all = [];
-num_iters = 1000;
+num_iters = 150;
 for iter = 1:num_iters
 	loss = 0;
 	
