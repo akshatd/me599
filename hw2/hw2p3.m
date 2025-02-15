@@ -78,6 +78,9 @@ for iter = 1:num_iters
 	loss_all = [loss_all, loss/N];
 end
 
+% save weights
+save('akshat_hwk2_p3_weights.mat', 'W1', 'W1_0', 'W2', 'W2_0');
+
 %% plot loss
 figure;
 semilogy(loss_all, 'LineWidth', 2, 'Marker', 'x');
@@ -89,11 +92,9 @@ ylabel('Loss Function');
 N_test = size(test_data, 2);
 yhats = zeros(N_test, 1);
 for i = 1:N_test
-	O1 = sig(W1'*test_data(:, i) + W1_0);
-	yhat = soft(W2'*O1 + W2_0);
-	[~, pred] = max(yhat);
-	yhats(i) = pred;
+	yhats(i) = akshat_hwk2_p3_predict(test_data(:, i));
 end
+
 y = zeros(N_test, 1);
 for i = 1:N_test
 	[~, idx] = max(test_label(:, i));
