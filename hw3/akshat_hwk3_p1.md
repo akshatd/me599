@@ -54,9 +54,15 @@ e^{-L} v = e^{-L} \vec{1} &= \left(I-L+\frac{L^2}{2!}-\frac{L^3}{3!}+\ldots\righ
 \end{aligned}
 $$
 
-Since $\|\vec{1}\|_{\infty} = 1$, $v = \vec{1}$ is a solution to the optimization problem, where the objective $\|e^{-L} v\|_{\infty} = 1$.
+Since $\|\vec{1}\|_{\infty} = 1$, $v = \vec{1}$ is a solution to the optimization problem,
+where the objective $\|e^{-L} v\|_{\infty} = 1$.
 
-To prove that it is a unique solution, we need to show that no other vector $v$, where $\|v\|_{\infty} = 1$, can have a larger $\|e^{-L} v\|_{\infty}$ than 1. From the notes 4.2 page 6, we know that if $L$ describes an unconnected directed graph, $e^{-L}$ is row-stochastic, which means that the sum of the elements in each row is 1. The matrix product $e^{-L} v$ sums up each row of $e^{-L}$ weighted by the corresponding element in $v$. A vector $v' \neq \vec{1}$ that has $\|\vec{v}\|_{\infty}=1$ will have at least one element $< 1$. Let
+To prove that it is a unique solution, we need to show that no other vector $v'$
+where $\|v'\|_{\infty} = 1$, can have a larger $\|e^{-L} v\|_{\infty}$ than 1.
+From the notes 4.2 page 6, we know that if $L$ describes an unconnected directed graph,
+$e^{-L}$ is row-stochastic, which means that the sum of the elements in each row is 1.
+The matrix product $e^{-L} v$ sums up each row of $e^{-L}$ weighted by the corresponding element in $v$.
+Let
 
 $$
 \begin{aligned}
@@ -104,6 +110,7 @@ E_{n,1} + E_{n,2} + \ldots + E_{n,n}
 \end{aligned}
 $$
 
+A vector $v'\neq\vec{1}$ that has $\|v'\|_{\infty}=1$ will have at least one element $< 1$.
 If we have $v'$ such that $v'_i < 1$ for some $i$, then
 
 $$
@@ -123,7 +130,13 @@ E_{n,1} + \ldots + E_{n,i} v'_i + \ldots + E_{n,n}
 \end{aligned}
 $$
 
-Since for any $X$, $\|X\|_{\infty} = \max_{i} |X_i|$, when comparing $e^{-L} \vec{1}$ and $e^{-L} v'$, row by row with subtraction, we see that for each row $j$ of $e^{-L}v'$ and $e^{-L} \vec{1}$, $|(e^{-L}v')_j| - |(e^{-L} \vec{1})_j| < 0 \implies \|e^{-L} v'\|_{\infty} < \|e^{-L} \vec{1}\|_{\infty}$.
+For a matrix $X$, $\|X\|_{\infty} = \max_{i} |X_i|$.
+
+We can compare $e^{-L} \vec{1}$ and $e^{-L} v'$ row by row with subtraction and check if one of them has
+a greater absolute value. If one row has a greater absolute value, the infinity norm of $e^{-L}$ with the corresponding
+vector will also be greater. Hence, given a row $j$ of $e^{-L}v'$ and $e^{-L} \vec{1}$,
+if $|(e^{-L}v')_j| - |(e^{-L} \vec{1})_j| < 0 \quad \forall j \implies \|e^{-L} v'\|_{\infty} < \|e^{-L} \vec{1}\|_{\infty}$.
+Therefore, we check $|(e^{-L}v')_j| - |(e^{-L} \vec{1})_j|$ for any row $j$:
 
 $$
 \begin{aligned}
@@ -134,7 +147,8 @@ $$
 \end{aligned}
 $$
 
-Since $v_i < 1$ will scale down the element $E_{j,i}$. Hence $v = \vec{1}$ is the unique solution to the optimization problem with the constraint $\|v\|_{\infty} = 1$.
+Which implies $\|e^{-L} v'\|_{\infty} < \|e^{-L} \vec{1}\|_{\infty}$. Intuitively, $v_i < 1$ will scale down the element
+$E_{j,i}$ and so $v = \vec{1}$ is the unique solution to the optimization problem with the constraint $\|v\|_{\infty} = 1$.
 
 ## Problem 1.b
 
