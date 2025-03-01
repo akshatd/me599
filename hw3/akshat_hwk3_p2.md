@@ -413,13 +413,12 @@ s^2 + \left(\frac{z K_D + b}{a}\right)s + \frac{z K_P + c}{a} &= s^2 -(P_1 + P_2
 $$
 
 Since we actually want a PID controller to improve the steady state error, we need to add an additional pole
-$P_I$ so that we can increase the order of the desired closed loop transfer function to 3. This way, we will have an additional term that we can use to derive the integral gain $K_I$. We choose $P_I$ such that it is sufficiently far from $P_1$ and $P_2$ to not affect the transient response. Typically, $P_I \ll -\zeta\omega_n$, at least $5\times$ away. However, if we place it too far away, the integral action will be too slow. So here we place it $7\times$ away.
+$P_I$ so that we can increase the order of the desired closed loop transfer function to 3. This way, we will have an additional term that we can use to derive the integral gain $K_I$. We choose $P_I$ such that it is sufficiently far from $P_1$ and $P_2$ to not affect the transient response. Typically, $P_I \ll -\zeta\omega_n$, at least $5\times$ away. However, if we place it too far away, the integral action will be too slow. After tuning the controller for good performance, I found that putting the pole $2\times$ away from $-\zeta\omega_n$ was a good compromise between speed and stability.
 
 $$
 \begin{aligned}
 TODO \\
-P_I &\ll -\zeta\omega_n \times 5 \\
-P_I &= -\zeta\omega_n \times 7 = -140
+P_I &= -\zeta\omega_n \times 2 = -40
 \end{aligned}
 $$
 
@@ -428,9 +427,9 @@ Using this additional pole, we can update our PID gains in the following way:
 $$
 \begin{aligned}
 TODO \\
-\bar{K_P} &= K_P + \frac{a}{z}P_I(P_1 + P_2) &= 154.34 \\
-\bar{K_D} &= K_D - \frac{a}{z}P_I &= 3.78 \\
-\bar{K_I} &= -P_I P_1 P_2 \frac{a}{z} &= 4512.04 \\
+\bar{K_P} &= K_P + \frac{a}{z}P_I(P_1 + P_2) &= 68.18 \\
+\bar{K_I} &= -P_I P_1 P_2 \frac{a}{z} &= 1289.15 \\
+\bar{K_D} &= K_D - \frac{a}{z}P_I &= 1.62 \\
 \end{aligned}
 $$
 
@@ -445,6 +444,8 @@ $$
 ## Problem 2.e
 
 The contoller was implemented in simulink with a controller using the PID gains derived in part (d).
+The reference had a maximum slew rate set to $\pm10$ rad/s to prevent the derivative term from causing large control inputs, which is realistic since the reference cannot change instantaneously.
+In addition, a saturation block was added to limit the control input to $[9, -9]V$ to prevent the motor from being overdriven.
 
 ![Simulink model](hw3p2e_sim.png)
 

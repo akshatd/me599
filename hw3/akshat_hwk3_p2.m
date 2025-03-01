@@ -109,7 +109,7 @@ Kp = (a*P1*P2-c)/z;
 fprintf('The desired KP=%.2f, KD=%.2f\n', Kp, Kd);
 
 % add pole for KI and update PID gains
-multiplier = 2.01;
+multiplier = 2;
 PI = -zeta*omega_n * multiplier;
 fprintf('The pole for KI, PI=%.2f\n', PI);
 
