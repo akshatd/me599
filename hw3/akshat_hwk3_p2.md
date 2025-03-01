@@ -112,7 +112,7 @@ Hence, the equilibrium points are
 
 $$
 \begin{aligned}
-x_{1eq} &= \frac{\pi}{2} + n\pi \quad n \in \mathbb{Z} \\
+x_{1eq} &= \pm\frac{\pi}{2} + 2\pi n \quad n \in \mathbb{Z} \\
 x_{2eq} &= 0 \\
 u_{eq} &= 0
 \end{aligned}
@@ -140,7 +140,7 @@ $$
 \end{aligned}
 $$
 
-Linearizing around the equilibrium points $x_{1eq}, x_{2eq}, u_{eq}$, we notice that we only have 2 choices for $x_{1eq}$ at $\pi/2$ and $3\pi/2$.
+Linearizing around the equilibrium points $x_{1eq}, x_{2eq}, u_{eq}$, for $x_{1eq}$ we select the points $\pi/2$ and $-\pi/2$.
 
 For $x_{1eq} = \pi/2$, we have:
 
@@ -158,11 +158,11 @@ To check stability, we need to find the eigenvalues of the matrix $A_1$
 
 Since we have an eigenvalue with a positive real part, the equilibrium point is unstable.
 
-For $x_{1eq} = 3\pi/2$, we have:
+For $x_{1eq} = -\pi/2$, we have:
 
 $$
 \begin{aligned}
-A_2 &= \nabla_x f \Big|_{x_{1eq} = 3\pi/2, x_{2eq} = 0, u_{eq} = 0} \\
+A_2 &= \nabla_x f \Big|_{x_{1eq} = -\pi/2, x_{2eq} = 0, u_{eq} = 0} \\
 &= \begin{bmatrix} 0 & 1 \\ -\frac{m_pgL_p}{I_p} & -\left(\frac{K_tK_b}{R_m} + B_m\right)\frac{1}{I_p} \end{bmatrix} \\
 \end{aligned}
 $$
@@ -176,11 +176,11 @@ Since we have eigenvalues with negative real parts, the equilibrium point is sta
 
 $$
 \begin{aligned}
-\boldsymbol{x}_{eq} &= \begin{bmatrix} \pi/2 + n\pi \\ 0 \end{bmatrix} \quad n \in \mathbb{Z} \\
+\boldsymbol{x}_{eq} &= \begin{bmatrix} \pm\frac{\pi}{2} + 2\pi n \\ 0 \end{bmatrix} \quad n \in \mathbb{Z} \\
 \end{aligned}
 $$
 
-are stable for even values of $n$ (when the pendulum is hanging down) and unstable for odd values of $n$ (when the pendulum is upright).
+are stable for $x_1 = -\frac{\pi}{2} + 2\pi n \quad n \in \mathbb{Z}$ (when the pendulum is hanging down) and unstable for $x_1 = \frac{\pi}{2} + 2\pi n \quad n \in \mathbb{Z}$ (when the pendulum is upright).
 
 We can perturb the original system by adding a small disturbance to the system around the equilibrium points and observe the behavior of the system. In the case of closed circuit, the dynamics stay the same as derived above. However, for open circuit, no current can flow in the circuit, so $i=0$. Therefore, net torque on the motor shaft becomes
 
@@ -213,20 +213,141 @@ y &= x_1
 \end{aligned}
 $$
 
-The system state $\boldsymbol{x}$ were perturbed by a small amount $[0.01, 0.01]^T$
+The system state $\boldsymbol{x}$ were perturbed by a small amount $[-0.01, -0.01]^T$
 Perturbed dynamics for $\boldsymbol{x}_{eq1} = [\pi/2, 0]^T$ are:
 
 ![Closed circuit perturbed dynamics ($\boldsymbol{x}_{eq1}$)](<hw3p2b_closed_circuit_dynamics_(xeq1).svg>){width=50%}
 ![Open circuit perturbed dynamics ($\boldsymbol{x}_{eq1}$)](<hw3p2b_open_circuit_dynamics_(xeq1).svg>){width=50%}
 
 We know that the equilibrium point $\boldsymbol{x}_{eq1} = [\pi/2, 0]^T$ is unstable, so we see the perturbed
-system diverging from this unstable equilibrium point in both cases and slowly stabilizing around the stable equilibrium point $\boldsymbol{x}_{eq2} = [3\pi/2, 0]^T$.
-However, the open circuit case does not stabilize within 10 seconds, while the closed circuit case does. This is because the closed circuit case has a damping torque due the back EMF of the motor ($K_t i$) in addition to the viscous friction torque which helps stabilize the system faster.
+system diverging from this unstable equilibrium point in both cases and slowly stabilizing around the stable equilibrium point $\boldsymbol{x}_{eq2} = [-\pi/2, 0]^T$.
+However, the open circuit case does not stabilize within 10 seconds, while the closed circuit case does. This is because the closed circuit case has a damping torque due the back EMF of the motor ($K_t i$) and resistive power losses from the motor resistance ($R_m i$) in addition to the viscous friction torque which helps stabilize the system faster.
 
-Perturbed dynamics for $\boldsymbol{x}_{eq2} = [3\pi/2, 0]^T$ are:
+Perturbed dynamics for $\boldsymbol{x}_{eq2} = [-\pi/2, 0]^T$ are:
 
 ![Closed circuit perturbed dynamics ($\boldsymbol{x}_{eq2}$)](<hw3p2b_closed_circuit_dynamics_(xeq2).svg>){width=50%}
 ![Open circuit perturbed dynamics ($\boldsymbol{x}_{eq2}$)](<hw3p2b_open_circuit_dynamics_(xeq2).svg>){width=50%}
 
-We know that the equilibrium point $\boldsymbol{x}_{eq2} = [3\pi/2, 0]^T$ is stable, so we see the perturbed
-system converging to this stable equilibrium point in both cases. However, the open circuit case takes longer to stabilize compared to the closed circuit case. This is because the closed circuit case has a damping torque due the back EMF of the motor ($K_t i$) in addition to the viscous friction torque which helps stabilize the system faster. Even so, the open circuit system only wanders around the stable equilibrium point within the same order of magnitude as the perturbation and does not diverge.
+We know that the equilibrium point $\boldsymbol{x}_{eq2} = [-\pi/2, 0]^T$ is stable, so we see the perturbed
+system converging to this stable equilibrium point in both cases. However, the open circuit case takes longer to stabilize compared to the closed circuit case. This is because the closed circuit case has a damping torque due the back EMF of the motor ($K_t i$) and resistive power losses from the motor resistance ($R_m i$) in addition to the viscous friction torque which helps stabilize the system faster. Even so, the open circuit system only wanders around the stable equilibrium point within the same order of magnitude as the perturbation and does not diverge.
+
+## Problem 2.c
+
+We already know the matrices $A_1$ and $A_2$ for the linearized system around the equilibrium points $\boldsymbol{x}_{eq1}$ and $\boldsymbol{x}_{eq2}$ respectively from part (b). We now need the matrices $B$, $C$ and $D$ for the state space representation of the system. To compute these, we will need the the jacobians $\nabla_u f$, $\nabla_x h$, and $\nabla_u h$ where:
+
+$$
+\begin{aligned}
+\boldsymbol{x} &= \begin{bmatrix} x_1 \\ x_2 \end{bmatrix} \\
+\boldsymbol{u} &= \begin{bmatrix} u \end{bmatrix} \\
+\boldsymbol{y} &= \begin{bmatrix} y \end{bmatrix} \\
+f &= \begin{bmatrix} x_2 \\ \frac{K_tu}{I_pR_m} - \left(\frac{K_tK_b}{R_m} + B_m\right)\frac{x_2}{I_p} - \frac{m_pgL_p}{I_p} cos(x_1) \end{bmatrix} \\
+h &= \begin{bmatrix} x_1 \end{bmatrix} \\
+\end{aligned}
+$$
+
+We can then define the jacobians as follows:
+
+$$
+\begin{aligned}
+\nabla_u f &= \begin{bmatrix} \frac{\partial f_1}{\partial u} \\ \frac{\partial f_2}{\partial u} \end{bmatrix} \\
+\frac{\partial f_1}{\partial u} &= 0 \\
+\frac{\partial f_2}{\partial u} &= \frac{K_t}{I_pR_m} \\
+\implies \nabla_u f &= \begin{bmatrix} 0 \\ \frac{K_t}{I_pR_m} \end{bmatrix} \\
+\nabla_x h &= \begin{bmatrix} \frac{\partial h_1}{\partial x_1} & \frac{\partial h_1}{\partial x_2} \end{bmatrix} \\
+\frac{\partial h_1}{\partial x_1} &= 1 \\
+\frac{\partial h_1}{\partial x_2} &= 0 \\
+\implies \nabla_x h &= \begin{bmatrix} 1 & 0 \end{bmatrix} \\
+\nabla_u h &= \begin{bmatrix} \frac{\partial h_1}{\partial u} \end{bmatrix} \\
+\frac{\partial h_1}{\partial u} &= 0 \\
+\implies \nabla_u h &= \begin{bmatrix} 0 \end{bmatrix} \\
+\end{aligned}
+$$
+
+Since none of them depend on $x_1$, they will be the same for both equilibrium points. Thus we have:
+
+$$
+\begin{aligned}
+B &= \nabla_u f = \begin{bmatrix} 0 \\ \frac{K_t}{I_pR_m} \end{bmatrix} \\
+C &= \nabla_x h = \begin{bmatrix} 1 & 0 \end{bmatrix} \\
+D &= \nabla_u h = \begin{bmatrix} 0 \end{bmatrix} \\
+\end{aligned}
+$$
+
+The transfer function of a system is $G(s) = C(sI - A)^{-1}B + D$.
+
+At $\boldsymbol{x}_{eq1} = [\pi/2, 0]^T$ we have:
+
+$$
+G_1(s) = C(sI - A_1)^{-1}B + D \\
+$$
+
+At $\boldsymbol{x}_{eq2} = [-\pi/2, 0]^T$ we have:
+
+$$
+G_2(s) = C(sI - A_2)^{-1}B + D \\
+$$
+
+The inverse laplace transform of the transfer function gives the impulse response function of the system $g(t)$. Where $g(t) = \mathcal{L}^{-1}\{G(s)\}$.
+
+At $\boldsymbol{x}_{eq1} = [\pi/2, 0]^T$ we have:
+
+$$
+\begin{aligned}
+g_1(t) &= \mathcal{L}^{-1}\{G_1(s)\} \\
+&= 4.56 e^{-2.33t} sinh(10.2t) \\
+\end{aligned}
+$$
+
+At $\boldsymbol{x}_{eq2} = [-\pi/2, 0]^T$ we have:
+
+$$
+\begin{aligned}
+g_2(t) &= \mathcal{L}^{-1}\{G_2(s)\} \\
+&= 4.82 e^{-2.33t} sin(9.63t) \\
+\end{aligned}
+$$
+
+We can plot the impulse response in matlab by using the `impulse` function in matlab.
+
+![Impulse response of the system around $x_{eq1}$](<hw3p2c_impulse_response_(xeq1).svg>){width=50%}
+![Impulse response of the system around $x_{eq2}$](<hw3p2c_impulse_response_(xeq2).svg>){width=50%}
+
+For the stable equilibrium point $x_{eq2}$, the system converges to the equilibrium point with time as expected, similar to the perturbed dynamics. However, for the unstable equilibrium point $x_{eq1}$, the system diverges from the equilibrium point. Since the transfer function here uses linearized dynamics, it is only accurate near the unstable equilibrium point. So once the system diverges, the linearized dynamics are no longer valid and the system diverges exponentially.
+
+## Problem 2.d
+
+To stabilize the system about $\theta=\pi/4$, we need to first linearize the dynamics around the point $\boldsymbol{x}_s = [\pi/4, 0]^T$. Using results from part (b) and (c), we have the matrices $A_s$, $B$, $C$, and $D$
+
+$$
+\begin{aligned}
+A_s &= \begin{bmatrix} 0 & 1 \\ \frac{m_pgL_p}{I_p} sin(\pi/4) & -\left(\frac{K_tK_b}{R_m} + B_m\right)\frac{1}{I_p} \end{bmatrix} \\
+B &= \begin{bmatrix} 0 \\ \frac{K_t}{I_pR_m} \end{bmatrix} \\
+C &= \begin{bmatrix} 1 & 0 \end{bmatrix} \\
+D &= \begin{bmatrix} 0 \end{bmatrix} \\
+\end{aligned}
+$$
+
+Using these, we find the transfer function $G_s(s) = C(sI - A_s)^{-1}B + D$ symbolically using matlab to get
+
+$$
+\begin{aligned}
+G_s(s) &= \frac{z}{as^2 + bs + c}
+\text{ where } & \\
+z &= 17867063951360000 \\
+a &= 384829069721600 \\
+b &= 1794402976530432 \\
+c &= -26694505514669475
+\end{aligned}
+$$
+
+We wish to design a feedback controller $C(s)$ such that the closed loop transfer function $G_{CL}(s)$ is of the following form
+
+$$
+\begin{aligned}
+G_{CL}(s) &= \frac{\omega_n^2}{s^2 + 2\zeta\omega_n s + \omega_n^2} \\
+\end{aligned}
+$$
+
+- Overshoot: $\%OS < 15\%$
+- Settling time: $t_s < 0.2s$
+  where $G_{CL}(s)$ is the closed loop transfer function.

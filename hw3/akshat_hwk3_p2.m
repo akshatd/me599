@@ -12,49 +12,77 @@ Ip = mp*(Lp)^2;% Moment of inertia of pendulum about center of mass
 Bm = 0.000008; %Nms/rad (viscous friction coefficient)
 g = 9.81; %m/s^2 acceleration due to gravity
 
-% part b equilibrium points and stability
+%% b: equilibrium points and stability
 x1_eq1 = pi/2;
-x1_eq2 = 3*pi/2;
+x1_eq2 = -pi/2;
 x2_eq = 0;
 u_eq = 0;
 
-A = pendulum_fdx(0, [x1_eq1; x2_eq], u_eq);
+A1 = pendulum_fdx(0, [x1_eq1; x2_eq], u_eq);
 A2 = pendulum_fdx(0, [x1_eq2; x2_eq], u_eq);
 
-e = eig(A);
+e1 = eig(A1);
 e2 = eig(A2);
 
-fprintf('The eigenvalues of the linearized system about the equilibrium point x1=pi/2 are:\n %.2f\n %.2f\n', e(1), e(2));
-fprintf('The eigenvalues of the linearized system about the equilibrium point x1=3pi/2 are:\n %.2f\n %.2f\n', e2(1), e2(2));
+fprintf('The eigenvalues of the linearized system about the equilibrium point x1=pi/2 are:\n %.2f\n %.2f\n', e1(1), e1(2));
+fprintf('The eigenvalues of the linearized system about the equilibrium point x1=-pi/2 are:\n %.2f\n %.2f\n', e2(1), e2(2));
 
 % check stability
-if real(e(1)) < 0 && real(e(2)) < 0
+if real(e1(1)) < 0 && real(e1(2)) < 0
 	fprintf('The equilibrium point x1=pi/2 is stable\n');
 else
 	fprintf('The equilibrium point x1=pi/2 is unstable\n');
 end
 
 if real(e2(1)) < 0 && real(e2(2)) < 0
-	fprintf('The equilibrium point x1=3pi/2 is stable\n');
+	fprintf('The equilibrium point x1=-pi/2 is stable\n');
 else
-	fprintf('The equilibrium point x1=3pi/2 is unstable\n');
+	fprintf('The equilibrium point x1=-pi/2 is unstable\n');
 end
 
 % perturb system
-p = [0.01; 0.01]; % perturbation
+p = [-0.01; -0.01]; % perturbation
 u0 = u_eq;
 x0 = [x1_eq1; x2_eq] + p;
-[t, x] = ode45(@(t, x) pendulum_f(t, x, u0), [0 10], x0);
-plot_pend_states(t, x, 'HW3P2b Closed circuit dynamics (xeq1)', [0 8], [-20 20]);
-[t, x] = ode45(@(t, x) pendulum_f_oc(t, x, u0), [0 10], x0);
-plot_pend_states(t, x, 'HW3P2b Open circuit dynamics (xeq1)', [0 8], [-20 20]);
+tspan = 0:0.01:10;
+[t, x] = ode45(@(t, x) pendulum_f(t, x, u0), tspan, x0);
+plot_pend_states(t, x, 'HW3P2b Closed circuit dynamics (xeq1)', [-4.6 1.6], [-20 20]);
+[t, x] = ode45(@(t, x) pendulum_f_oc(t, x, u0), tspan, x0);
+plot_pend_states(t, x, 'HW3P2b Open circuit dynamics (xeq1)', [-4.6 1.6], [-20 20]);
 
 x0 = [x1_eq2; x2_eq] + p;
-[t, x] = ode45(@(t, x) pendulum_f(t, x, u0), [0 10], x0);
-plot_pend_states(t, x, 'HW3P2b Closed circuit dynamics (xeq2)', [4.7 4.725], [-0.1 0.1]);
-[t, x] = ode45(@(t, x) pendulum_f_oc(t, x, u0), [0 10], x0);
-plot_pend_states(t, x, 'HW3P2b Open circuit dynamics (xeq2)', [4.7 4.725], [-0.1 0.1]);
+[t, x] = ode45(@(t, x) pendulum_f(t, x, u0), tspan, x0);
+plot_pend_states(t, x, 'HW3P2b Closed circuit dynamics (xeq2)', [-1.585 -1.55], [-0.1 0.1]);
+[t, x] = ode45(@(t, x) pendulum_f_oc(t, x, u0), tspan, x0);
+plot_pend_states(t, x, 'HW3P2b Open circuit dynamics (xeq2)', [-1.585 -1.55], [-0.1 0.1]);
 
+%% c: impulse response
+B = [0; Kt/(Ip*Rm)];
+C = [1 0];
+D = 0;
+% get impulse response function(inverse laplace)
+syms s
+G_1 = C*inv(s*eye(2) - A1)*B+D;
+g_1 = vpa(ilaplace(G_1), 3);
+fprintf('The impulse response of the system about the equilibrium point x1=pi/2 is:\n');
+display(g_1);
+G_2 = C*inv(s*eye(2) - A2)*B+D;
+g_2 = vpa(ilaplace(G_2), 3);
+fprintf('The impulse response of the system about the equilibrium point x1=-pi/2 is:\n');
+display(g_2);
+% plot impulse response
+y = impulse(ss(A1, B, C, D), tspan);
+plot_impulse_resp(tspan, y, 'HW3P2c Impulse response (xeq1)');
+y = impulse(ss(A2, B, C, D), tspan);
+plot_impulse_resp(tspan, y, 'HW3P2c Impulse response (xeq2)');
+
+%% d: controller design
+% transfer function
+x_s = [pi/4; 0];
+As = pendulum_fdx(0, x_s, u_eq);
+syms s
+G_s = C*inv(s*eye(2) - As)*B+D;
+display(G_s);
 
 function xdot = pendulum_f(t, x, u)
 % x = [theta, theta_dot]
@@ -137,4 +165,19 @@ xlabel("Time (s)");
 saveas(fig, save_str, 'svg');
 end
 
+function plot_impulse_resp(t, y, title_str)
+save_str = lower(strrep(title_str, ' ', '_'));
+% wrap y to +-pi
+% y = mod(y, 2*pi);
+fig = figure;
+if range(y) > 2*pi
+	semilogy(t, y, "LineWidth", 1.5);
+else
+	plot(t, y, "LineWidth", 1.5);
+end
+title(title_str);
+xlabel("Time (s)");
+ylabel("Impulse response");
+saveas(fig, save_str, 'svg');
+end
 
