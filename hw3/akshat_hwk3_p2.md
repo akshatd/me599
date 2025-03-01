@@ -340,7 +340,7 @@ c &= -26694505514669475
 \end{aligned}
 $$
 
-We wish to design a feedback controller $C(s)$ such that the closed loop transfer function $G_{CL}(s)$ is of the following form
+We wish to design a feedback controller $C(s)$ such that the desired closed loop transfer function $G_{CL}(s)$ is of the following form
 
 $$
 \begin{aligned}
@@ -348,6 +348,106 @@ G_{CL}(s) &= \frac{\omega_n^2}{s^2 + 2\zeta\omega_n s + \omega_n^2} \\
 \end{aligned}
 $$
 
-- Overshoot: $\%OS < 15\%$
+With the specifications
+
 - Settling time: $t_s < 0.2s$
-  where $G_{CL}(s)$ is the closed loop transfer function.
+- Overshoot: $\%OS < 15\%$
+
+We note that
+
+$$
+\begin{aligned}
+t_s = \frac{4}{\zeta\omega_n} \\
+\%OS &= e^{-\frac{\zeta\pi}{\sqrt{1-\zeta^2}}} \times 100 \% \\
+\end{aligned}
+$$
+
+Therefore, the specifications give us the following constraints on $\zeta$ and $\omega_n$
+
+$$
+\begin{aligned}
+t_s < 0.2s &\implies \zeta\omega_n > \frac{4}{0.2} \\
+&\implies \zeta\omega_n > 20 \\
+\%OS < 15\% &\implies e^{-\frac{\zeta\pi}{\sqrt{1-\zeta^2}}} < 0.15 \\
+&\implies \zeta > \frac{-ln(0.15)}{\sqrt{\pi^2 + (ln(0.15))^2}} \\
+&\implies \zeta > 0.5169 \\
+&\implies \zeta = 0.5170 \\
+\text{Therefore } \omega_n &> \frac{20}{0.517} \\
+\implies \omega_n &> 38.6824 \\
+\implies \omega_n &= 38.6825 \\
+\end{aligned}
+$$
+
+Hence, we choose $\zeta = 0.5170$ and $\omega_n = 38.6825$ by by adding $0.0001$ to keep them as small as possible.
+
+We wish to design a controller $C(s)$ such that the closed loop system satisfies the specifications and constraints with the desired poles:
+
+$$
+P_{1,2} = -\zeta\omega_n \pm i\omega_n\sqrt{1-\zeta^2}
+$$
+
+Using matlab, we find the desired poles, which are the roots of the denominator of the desired closed loop transfer function.
+
+$$
+\begin{aligned}
+P_1 &= -20.00 + 33.11i \\
+P_2 &= -20.00 - 33.11i \\
+\end{aligned}
+$$
+
+Using the expression for $G_{CL}(s)$ for a PD controller, we have
+
+$$
+G_{CL}(s) = \frac{G_s(s)C(s)}{1 + G_s(s)C(s)} = \frac{\frac{z(K_P + K_Ds)}{a}}{s^2 + \left(\frac{z K_D + b}{a}\right)s + \frac{z K_P + c}{a}}
+$$
+
+We choose $K_P$ and $K_D$ such that the denominator of our $G_{CL}(s)$ mathces the denominator of the desired $G_{CL}(s)$, i.e.
+
+$$
+\begin{aligned}
+s^2 + \left(\frac{z K_D + b}{a}\right)s + \frac{z K_P + c}{a} &= (s-P_1)(s-P_2) \\
+s^2 + \left(\frac{z K_D + b}{a}\right)s + \frac{z K_P + c}{a} &= s^2 -(P_1 + P_2)s + P_1P_2 \\
+\implies K_D = \frac{-a(P_1 + P_2) - b}{z} ,& \quad K_P = \frac{aP_1P_2 - c}{z} \\
+\implies K_D = 0.76 ,& \quad K_P = 33.72 \\
+\end{aligned}
+$$
+
+Since we actually want a PID controller to improve the steady state error, we need to add an additional pole
+$P_I$ so that we can increase the order of the desired closed loop transfer function to 3. This way, we will have an additional term that we can use to derive the integral gain $K_I$. We choose $P_I$ such that it is sufficiently far from $P_1$ and $P_2$ to not affect the transient response. Typically, $P_I \ll -\zeta\omega_n$, at least $5\times$ away. However, if we place it too far away, the integral action will be too slow. So here we place it $7\times$ away.
+
+$$
+\begin{aligned}
+TODO \\
+P_I &\ll -\zeta\omega_n \times 5 \\
+P_I &= -\zeta\omega_n \times 7 = -140
+\end{aligned}
+$$
+
+Using this additional pole, we can update our PID gains in the following way:
+
+$$
+\begin{aligned}
+TODO \\
+\bar{K_P} &= K_P + \frac{a}{z}P_I(P_1 + P_2) &= 154.34 \\
+\bar{K_D} &= K_D - \frac{a}{z}P_I &= 3.78 \\
+\bar{K_I} &= -P_I P_1 P_2 \frac{a}{z} &= 4512.04 \\
+\end{aligned}
+$$
+
+Resulting in the final controller
+
+$$
+\begin{aligned}
+C(s) &= \bar{K_P} + \frac{\bar{K_I}}{s} + \bar{K_D}s
+\end{aligned}
+$$
+
+## Problem 2.e
+
+The contoller was implemented in simulink with a controller using the PID gains derived in part (d).
+
+![Simulink model](hw3p2e_sim.png)
+
+Which was able to follow the reference trajectory while staying within the bounds of $[9, -9]V$.
+
+![Reference tracking with PID controller](hw3p2e.svg)

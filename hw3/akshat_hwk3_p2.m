@@ -82,7 +82,59 @@ x_s = [pi/4; 0];
 As = pendulum_fdx(0, x_s, u_e);
 syms s
 G_s = C*inv(s*eye(2) - As)*B+D;
+fprintf('The transfer function of the system about the equilibrium point x1=pi/4 is:\n');
 display(G_s);
+[num, den] = numden(G_s);
+z = sym2poly(num);
+den_coeff = sym2poly(den);
+a = den_coeff(1); b = den_coeff(2); c = den_coeff(3);
+
+% find zeta and omega
+ts_max = 0.2;
+os_max = 0.15;
+% add a tiny amount extra so theyre greater than
+zeta = -log(os_max)/sqrt(pi^2 + log(os_max)^2) + 0.0001;
+omega_n = 4/(zeta*ts_max) + 0.0001;
+fprintf('The damping ratio zeta is %.4f\n', zeta);
+fprintf('The natural frequency omega_n is %.4f\n', omega_n);
+
+% find poles
+P1 = -zeta*omega_n + 1i*omega_n*sqrt(1 - zeta^2);
+P2 = -zeta*omega_n - 1i*omega_n*sqrt(1 - zeta^2);
+fprintf('The poles of the system are:\n %.2f %.2fi\n %.2f %.2fi\n', real(P1), imag(P1), real(P2), imag(P2));
+
+% use poles to find the desired KP and KD
+Kd = (-a*(P1+P2)-b)/z;
+Kp = (a*P1*P2-c)/z;
+fprintf('The desired KP=%.2f, KD=%.2f\n', Kp, Kd);
+
+% add pole for KI and update PID gains
+multiplier = 2.01;
+PI = -zeta*omega_n * multiplier;
+fprintf('The pole for KI, PI=%.2f\n', PI);
+
+Kp_bar = real(Kp + a/z*PI*(P1+P2));
+Ki_bar = real(-PI*P1*P2*a/z);
+Kd_bar = real(Kd - a/z*PI);
+fprintf('Final PID gains:\n KP=%.2f\n KI=%.2f\n KD=%.2f\n', Kp_bar, Ki_bar, Kd_bar);
+
+%% e: reference tracking for closed loop system after running simulation
+fig = figure;
+hold on;
+plot(out.tout, out.x1.data, 'b', 'LineWidth', 1, 'DisplayName', "$\theta$");
+plot(out.tout, out.r.data, 'k--', 'LineWidth', 1.5, 'DisplayName', 'Reference');
+ylabel("$\theta$ (rad)", 'Interpreter', 'latex');
+yyaxis right;
+plot(out.tout, out.v.data, 'r', 'LineWidth', 1, 'DisplayName', 'Voltage');
+hold on;
+yline(9, 'm--', 'LineWidth', 1.5, 'DisplayName', 'Voltage Limit (+9V)');
+yline(-9, 'm--', 'LineWidth', 1.5, 'DisplayName', 'Voltage Limit (-9V)');
+ylabel("Voltage (V)");
+xlabel("Time (s)");
+legend('Interpreter', 'latex');
+title('HW3P2e Spotlight Reference Tracking with PID Controller');
+fig.Position(3:4) = [1000 700];
+saveas(fig, 'hw3p2e', 'svg');
 
 function xdot = pendulum_f(t, x, u)
 % x = [theta, theta_dot]
