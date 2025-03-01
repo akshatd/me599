@@ -13,13 +13,13 @@ Bm = 0.000008; %Nms/rad (viscous friction coefficient)
 g = 9.81; %m/s^2 acceleration due to gravity
 
 %% b: equilibrium points and stability
-x1_eq1 = pi/2;
-x1_eq2 = -pi/2;
-x2_eq = 0;
-u_eq = 0;
+x1_e1 = pi/2;
+x1_e2 = -pi/2;
+x2_e = 0;
+u_e = 0;
 
-A1 = pendulum_fdx(0, [x1_eq1; x2_eq], u_eq);
-A2 = pendulum_fdx(0, [x1_eq2; x2_eq], u_eq);
+A1 = pendulum_fdx(0, [x1_e1; x2_e], u_e);
+A2 = pendulum_fdx(0, [x1_e2; x2_e], u_e);
 
 e1 = eig(A1);
 e2 = eig(A2);
@@ -42,19 +42,19 @@ end
 
 % perturb system
 p = [-0.01; -0.01]; % perturbation
-u0 = u_eq;
-x0 = [x1_eq1; x2_eq] + p;
+u0 = u_e;
+x0 = [x1_e1; x2_e] + p;
 tspan = 0:0.01:10;
 [t, x] = ode45(@(t, x) pendulum_f(t, x, u0), tspan, x0);
-plot_pend_states(t, x, 'HW3P2b Closed circuit dynamics (xeq1)', [-4.6 1.6], [-20 20]);
+plot_pend_states(t, x, 'HW3P2b Closed circuit dynamics (xe1)', [-4.6 1.6], [-20 20]);
 [t, x] = ode45(@(t, x) pendulum_f_oc(t, x, u0), tspan, x0);
-plot_pend_states(t, x, 'HW3P2b Open circuit dynamics (xeq1)', [-4.6 1.6], [-20 20]);
+plot_pend_states(t, x, 'HW3P2b Open circuit dynamics (xe1)', [-4.6 1.6], [-20 20]);
 
-x0 = [x1_eq2; x2_eq] + p;
+x0 = [x1_e2; x2_e] + p;
 [t, x] = ode45(@(t, x) pendulum_f(t, x, u0), tspan, x0);
-plot_pend_states(t, x, 'HW3P2b Closed circuit dynamics (xeq2)', [-1.585 -1.55], [-0.1 0.1]);
+plot_pend_states(t, x, 'HW3P2b Closed circuit dynamics (xe2)', [-1.585 -1.55], [-0.1 0.1]);
 [t, x] = ode45(@(t, x) pendulum_f_oc(t, x, u0), tspan, x0);
-plot_pend_states(t, x, 'HW3P2b Open circuit dynamics (xeq2)', [-1.585 -1.55], [-0.1 0.1]);
+plot_pend_states(t, x, 'HW3P2b Open circuit dynamics (xe2)', [-1.585 -1.55], [-0.1 0.1]);
 
 %% c: impulse response
 B = [0; Kt/(Ip*Rm)];
@@ -72,14 +72,14 @@ fprintf('The impulse response of the system about the equilibrium point x1=-pi/2
 display(g_2);
 % plot impulse response
 y = impulse(ss(A1, B, C, D), tspan);
-plot_impulse_resp(tspan, y, 'HW3P2c Impulse response (xeq1)');
+plot_impulse_resp(tspan, y, 'HW3P2c Impulse response (xe1)');
 y = impulse(ss(A2, B, C, D), tspan);
-plot_impulse_resp(tspan, y, 'HW3P2c Impulse response (xeq2)');
+plot_impulse_resp(tspan, y, 'HW3P2c Impulse response (xe2)');
 
 %% d: controller design
 % transfer function
 x_s = [pi/4; 0];
-As = pendulum_fdx(0, x_s, u_eq);
+As = pendulum_fdx(0, x_s, u_e);
 syms s
 G_s = C*inv(s*eye(2) - As)*B+D;
 display(G_s);

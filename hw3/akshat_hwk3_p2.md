@@ -112,9 +112,9 @@ Hence, the equilibrium points are
 
 $$
 \begin{aligned}
-x_{1eq} &= \pm\frac{\pi}{2} + 2\pi n \quad n \in \mathbb{Z} \\
-x_{2eq} &= 0 \\
-u_{eq} &= 0
+x_{1e} &= \pm\frac{\pi}{2} + 2\pi n \quad n \in \mathbb{Z} \\
+x_{2e} &= 0 \\
+u_{e} &= 0
 \end{aligned}
 $$
 
@@ -140,13 +140,13 @@ $$
 \end{aligned}
 $$
 
-Linearizing around the equilibrium points $x_{1eq}, x_{2eq}, u_{eq}$, for $x_{1eq}$ we select the points $\pi/2$ and $-\pi/2$.
+Linearizing around the equilibrium points $x_{1e}, x_{2e}, u_{e}$, for $x_{1e}$ we select the points $\pi/2$ and $-\pi/2$.
 
-For $x_{1eq} = \pi/2$, we have:
+For $x_{1e} = \pi/2$, we have:
 
 $$
 \begin{aligned}
-A_1 &= \nabla_x f \Big|_{x_{1eq} = \pi/2, x_{2eq} = 0, u_{eq} = 0} \\
+A_1 &= \nabla_x f \Big|_{x_{1e} = \pi/2, x_{2e} = 0, u_{e} = 0} \\
 &= \begin{bmatrix} 0 & 1 \\ \frac{m_pgL_p}{I_p} & -\left(\frac{K_tK_b}{R_m} + B_m\right)\frac{1}{I_p} \end{bmatrix} \\
 \end{aligned}
 $$
@@ -158,11 +158,11 @@ To check stability, we need to find the eigenvalues of the matrix $A_1$
 
 Since we have an eigenvalue with a positive real part, the equilibrium point is unstable.
 
-For $x_{1eq} = -\pi/2$, we have:
+For $x_{1e} = -\pi/2$, we have:
 
 $$
 \begin{aligned}
-A_2 &= \nabla_x f \Big|_{x_{1eq} = -\pi/2, x_{2eq} = 0, u_{eq} = 0} \\
+A_2 &= \nabla_x f \Big|_{x_{1e} = -\pi/2, x_{2e} = 0, u_{e} = 0} \\
 &= \begin{bmatrix} 0 & 1 \\ -\frac{m_pgL_p}{I_p} & -\left(\frac{K_tK_b}{R_m} + B_m\right)\frac{1}{I_p} \end{bmatrix} \\
 \end{aligned}
 $$
@@ -176,7 +176,7 @@ Since we have eigenvalues with negative real parts, the equilibrium point is sta
 
 $$
 \begin{aligned}
-\boldsymbol{x}_{eq} &= \begin{bmatrix} \pm\frac{\pi}{2} + 2\pi n \\ 0 \end{bmatrix} \quad n \in \mathbb{Z} \\
+\boldsymbol{x}_{e} &= \begin{bmatrix} \pm\frac{\pi}{2} + 2\pi n \\ 0 \end{bmatrix} \quad n \in \mathbb{Z} \\
 \end{aligned}
 $$
 
@@ -214,26 +214,26 @@ y &= x_1
 $$
 
 The system state $\boldsymbol{x}$ were perturbed by a small amount $[-0.01, -0.01]^T$
-Perturbed dynamics for $\boldsymbol{x}_{eq1} = [\pi/2, 0]^T$ are:
+Perturbed dynamics for $\boldsymbol{x}_{e1} = [\pi/2, 0]^T$ are:
 
-![Closed circuit perturbed dynamics ($\boldsymbol{x}_{eq1}$)](<hw3p2b_closed_circuit_dynamics_(xeq1).svg>){width=50%}
-![Open circuit perturbed dynamics ($\boldsymbol{x}_{eq1}$)](<hw3p2b_open_circuit_dynamics_(xeq1).svg>){width=50%}
+![Closed circuit perturbed dynamics ($\boldsymbol{x}_{e1}$)](<hw3p2b_closed_circuit_dynamics_(xe1).svg>){width=50%}
+![Open circuit perturbed dynamics ($\boldsymbol{x}_{e1}$)](<hw3p2b_open_circuit_dynamics_(xe1).svg>){width=50%}
 
-We know that the equilibrium point $\boldsymbol{x}_{eq1} = [\pi/2, 0]^T$ is unstable, so we see the perturbed
-system diverging from this unstable equilibrium point in both cases and slowly stabilizing around the stable equilibrium point $\boldsymbol{x}_{eq2} = [-\pi/2, 0]^T$.
+We know that the equilibrium point $\boldsymbol{x}_{e1} = [\pi/2, 0]^T$ is unstable, so we see the perturbed
+system diverging from this unstable equilibrium point in both cases and slowly stabilizing around the stable equilibrium point $\boldsymbol{x}_{e2} = [-\pi/2, 0]^T$.
 However, the open circuit case does not stabilize within 10 seconds, while the closed circuit case does. This is because the closed circuit case has a damping torque due the back EMF of the motor ($K_t i$) and resistive power losses from the motor resistance ($R_m i$) in addition to the viscous friction torque which helps stabilize the system faster.
 
-Perturbed dynamics for $\boldsymbol{x}_{eq2} = [-\pi/2, 0]^T$ are:
+Perturbed dynamics for $\boldsymbol{x}_{e2} = [-\pi/2, 0]^T$ are:
 
-![Closed circuit perturbed dynamics ($\boldsymbol{x}_{eq2}$)](<hw3p2b_closed_circuit_dynamics_(xeq2).svg>){width=50%}
-![Open circuit perturbed dynamics ($\boldsymbol{x}_{eq2}$)](<hw3p2b_open_circuit_dynamics_(xeq2).svg>){width=50%}
+![Closed circuit perturbed dynamics ($\boldsymbol{x}_{e2}$)](<hw3p2b_closed_circuit_dynamics_(xe2).svg>){width=50%}
+![Open circuit perturbed dynamics ($\boldsymbol{x}_{e2}$)](<hw3p2b_open_circuit_dynamics_(xe2).svg>){width=50%}
 
-We know that the equilibrium point $\boldsymbol{x}_{eq2} = [-\pi/2, 0]^T$ is stable, so we see the perturbed
+We know that the equilibrium point $\boldsymbol{x}_{e2} = [-\pi/2, 0]^T$ is stable, so we see the perturbed
 system converging to this stable equilibrium point in both cases. However, the open circuit case takes longer to stabilize compared to the closed circuit case. This is because the closed circuit case has a damping torque due the back EMF of the motor ($K_t i$) and resistive power losses from the motor resistance ($R_m i$) in addition to the viscous friction torque which helps stabilize the system faster. Even so, the open circuit system only wanders around the stable equilibrium point within the same order of magnitude as the perturbation and does not diverge.
 
 ## Problem 2.c
 
-We already know the matrices $A_1$ and $A_2$ for the linearized system around the equilibrium points $\boldsymbol{x}_{eq1}$ and $\boldsymbol{x}_{eq2}$ respectively from part (b). We now need the matrices $B$, $C$ and $D$ for the state space representation of the system. To compute these, we will need the the jacobians $\nabla_u f$, $\nabla_x h$, and $\nabla_u h$ where:
+We already know the matrices $A_1$ and $A_2$ for the linearized system around the equilibrium points $\boldsymbol{x}_{e1}$ and $\boldsymbol{x}_{e2}$ respectively from part (b). We now need the matrices $B$, $C$ and $D$ for the state space representation of the system. To compute these, we will need the the jacobians $\nabla_u f$, $\nabla_x h$, and $\nabla_u h$ where:
 
 $$
 \begin{aligned}
@@ -275,13 +275,13 @@ $$
 
 The transfer function of a system is $G(s) = C(sI - A)^{-1}B + D$.
 
-At $\boldsymbol{x}_{eq1} = [\pi/2, 0]^T$ we have:
+At $\boldsymbol{x}_{e1} = [\pi/2, 0]^T$ we have:
 
 $$
 G_1(s) = C(sI - A_1)^{-1}B + D \\
 $$
 
-At $\boldsymbol{x}_{eq2} = [-\pi/2, 0]^T$ we have:
+At $\boldsymbol{x}_{e2} = [-\pi/2, 0]^T$ we have:
 
 $$
 G_2(s) = C(sI - A_2)^{-1}B + D \\
@@ -289,7 +289,7 @@ $$
 
 The inverse laplace transform of the transfer function gives the impulse response function of the system $g(t)$. Where $g(t) = \mathcal{L}^{-1}\{G(s)\}$.
 
-At $\boldsymbol{x}_{eq1} = [\pi/2, 0]^T$ we have:
+At $\boldsymbol{x}_{e1} = [\pi/2, 0]^T$ we have:
 
 $$
 \begin{aligned}
@@ -298,7 +298,7 @@ g_1(t) &= \mathcal{L}^{-1}\{G_1(s)\} \\
 \end{aligned}
 $$
 
-At $\boldsymbol{x}_{eq2} = [-\pi/2, 0]^T$ we have:
+At $\boldsymbol{x}_{e2} = [-\pi/2, 0]^T$ we have:
 
 $$
 \begin{aligned}
@@ -309,10 +309,10 @@ $$
 
 We can plot the impulse response in matlab by using the `impulse` function in matlab.
 
-![Impulse response of the system around $x_{eq1}$](<hw3p2c_impulse_response_(xeq1).svg>){width=50%}
-![Impulse response of the system around $x_{eq2}$](<hw3p2c_impulse_response_(xeq2).svg>){width=50%}
+![Impulse response of the system around $x_{e1}$](<hw3p2c_impulse_response_(xe1).svg>){width=50%}
+![Impulse response of the system around $x_{e2}$](<hw3p2c_impulse_response_(xe2).svg>){width=50%}
 
-For the stable equilibrium point $x_{eq2}$, the system converges to the equilibrium point with time as expected, similar to the perturbed dynamics. However, for the unstable equilibrium point $x_{eq1}$, the system diverges from the equilibrium point. Since the transfer function here uses linearized dynamics, it is only accurate near the unstable equilibrium point. So once the system diverges, the linearized dynamics are no longer valid and the system diverges exponentially.
+For the stable equilibrium point $\boldsymbol{x}_{e2} = [-\pi/2, 0]^T$, the system converges to the equilibrium point with time as expected, similar to the perturbed dynamics. However, for the unstable equilibrium point $\boldsymbol{x}_{e1} = [\pi/2, 0]^T$, the system diverges from the equilibrium point. Since the transfer function here uses linearized dynamics, it is only accurate near the unstable equilibrium point. So once the system diverges, the linearized dynamics are no longer valid and the system diverges exponentially.
 
 ## Problem 2.d
 
