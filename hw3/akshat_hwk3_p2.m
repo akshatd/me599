@@ -109,7 +109,7 @@ Kp = (a*P1*P2-c)/z;
 fprintf('The desired KP=%.2f, KD=%.2f\n', Kp, Kd);
 
 % add pole for KI and update PID gains
-multiplier = 2;
+multiplier = 10;
 PI = -zeta*omega_n * multiplier;
 fprintf('The pole for KI, PI=%.2f\n', PI);
 
@@ -120,21 +120,21 @@ fprintf('Final PID gains:\n KP=%.2f\n KI=%.2f\n KD=%.2f\n', Kp_bar, Ki_bar, Kd_b
 
 %% e: reference tracking for closed loop system after running simulation
 fig = figure;
-hold on;
-plot(out.tout, out.x1.data, 'b', 'LineWidth', 1, 'DisplayName', "$\theta$");
-plot(out.tout, out.r.data, 'k--', 'LineWidth', 1.5, 'DisplayName', 'Reference');
+% hold on;
+plot(out.tout, out.x1.data, 'b', 'LineWidth', 1.5, 'DisplayName', "$\theta$");
+% plot(out.tout, out.r.data, 'k--', 'LineWidth', 1.5, 'DisplayName', 'Reference');
 ylabel("$\theta$ (rad)", 'Interpreter', 'latex');
 yyaxis right;
 plot(out.tout, out.v.data, 'r', 'LineWidth', 1, 'DisplayName', 'Voltage');
 hold on;
-yline(9, 'm--', 'LineWidth', 1.5, 'DisplayName', 'Voltage Limit (+9V)');
-yline(-9, 'm--', 'LineWidth', 1.5, 'DisplayName', 'Voltage Limit (-9V)');
+% yline(9, 'm--', 'LineWidth', 1.5, 'DisplayName', 'Voltage Limit (+9V)');
+% yline(-9, 'm--', 'LineWidth', 1.5, 'DisplayName', 'Voltage Limit (-9V)');
 ylabel("Voltage (V)");
 xlabel("Time (s)");
 legend('Interpreter', 'latex');
 title('HW3P2e Spotlight Reference Tracking with PID Controller');
 fig.Position(3:4) = [1000 700];
-saveas(fig, 'hw3p2e', 'svg');
+saveas(fig, 'figs/hw3p2e', 'svg');
 
 function xdot = pendulum_f(t, x, u)
 % x = [theta, theta_dot]
@@ -214,7 +214,7 @@ ylabel("$\dot{\theta}$ (rad/s)", 'Interpreter', 'latex');
 ylim(ylim_2);
 xlabel("Time (s)");
 
-saveas(fig, save_str, 'svg');
+saveas(fig, "figs/"+save_str, 'svg');
 end
 
 function plot_impulse_resp(t, y, title_str)
@@ -230,6 +230,6 @@ end
 title(title_str);
 xlabel("Time (s)");
 ylabel("Impulse response");
-saveas(fig, save_str, 'svg');
+saveas(fig, "figs/"+save_str, 'svg');
 end
 

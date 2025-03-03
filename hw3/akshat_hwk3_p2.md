@@ -5,7 +5,7 @@ geometry:
 
 ## Problem 2.a
 
-![Circuit Diagram](hw3p2_circuit.jpg)
+![Circuit Diagram](figs/hw3p2_circuit.jpg)
 
 For the given motor with a point mass attached, we are given:
 
@@ -216,8 +216,8 @@ $$
 The system state $\boldsymbol{x}$ were perturbed by a small amount $[-0.01, -0.01]^T$
 Perturbed dynamics for $\boldsymbol{x}_{e1} = [\pi/2, 0]^T$ are:
 
-![Closed circuit perturbed dynamics ($\boldsymbol{x}_{e1}$)](<hw3p2b_closed_circuit_dynamics_(xe1).svg>){width=50%}
-![Open circuit perturbed dynamics ($\boldsymbol{x}_{e1}$)](<hw3p2b_open_circuit_dynamics_(xe1).svg>){width=50%}
+![Closed circuit perturbed dynamics ($\boldsymbol{x}_{e1}$)](<figs/hw3p2b_closed_circuit_dynamics_(xe1).svg>){width=50%}
+![Open circuit perturbed dynamics ($\boldsymbol{x}_{e1}$)](<figs/hw3p2b_open_circuit_dynamics_(xe1).svg>){width=50%}
 
 We know that the equilibrium point $\boldsymbol{x}_{e1} = [\pi/2, 0]^T$ is unstable, so we see the perturbed
 system diverging from this unstable equilibrium point in both cases and slowly stabilizing around the stable equilibrium point $\boldsymbol{x}_{e2} = [-\pi/2, 0]^T$.
@@ -225,8 +225,8 @@ However, the open circuit case does not stabilize within 10 seconds, while the c
 
 Perturbed dynamics for $\boldsymbol{x}_{e2} = [-\pi/2, 0]^T$ are:
 
-![Closed circuit perturbed dynamics ($\boldsymbol{x}_{e2}$)](<hw3p2b_closed_circuit_dynamics_(xe2).svg>){width=50%}
-![Open circuit perturbed dynamics ($\boldsymbol{x}_{e2}$)](<hw3p2b_open_circuit_dynamics_(xe2).svg>){width=50%}
+![Closed circuit perturbed dynamics ($\boldsymbol{x}_{e2}$)](<figs/hw3p2b_closed_circuit_dynamics_(xe2).svg>){width=50%}
+![Open circuit perturbed dynamics ($\boldsymbol{x}_{e2}$)](<figs/hw3p2b_open_circuit_dynamics_(xe2).svg>){width=50%}
 
 We know that the equilibrium point $\boldsymbol{x}_{e2} = [-\pi/2, 0]^T$ is stable, so we see the perturbed
 system converging to this stable equilibrium point in both cases. However, the open circuit case takes longer to stabilize compared to the closed circuit case. This is because the closed circuit case has a damping torque due the back EMF of the motor ($K_t i$) and resistive power losses from the motor resistance ($R_m i$) in addition to the viscous friction torque which helps stabilize the system faster. Even so, the open circuit system only wanders around the stable equilibrium point within the same order of magnitude as the perturbation and does not diverge.
@@ -309,8 +309,8 @@ $$
 
 We can plot the impulse response in matlab by using the `impulse` function in matlab.
 
-![Impulse response of the system around $x_{e1}$](<hw3p2c_impulse_response_(xe1).svg>){width=50%}
-![Impulse response of the system around $x_{e2}$](<hw3p2c_impulse_response_(xe2).svg>){width=50%}
+![Impulse response of the system around $x_{e1}$](<figs/hw3p2c_impulse_response_(xe1).svg>){width=50%}
+![Impulse response of the system around $x_{e2}$](<figs/hw3p2c_impulse_response_(xe2).svg>){width=50%}
 
 For the stable equilibrium point $\boldsymbol{x}_{e2} = [-\pi/2, 0]^T$, the system converges to the equilibrium point with time as expected, similar to the perturbed dynamics. However, for the unstable equilibrium point $\boldsymbol{x}_{e1} = [\pi/2, 0]^T$, the system diverges from the equilibrium point. Since the transfer function here uses linearized dynamics, it is only accurate near the unstable equilibrium point. So once the system diverges, the linearized dynamics are no longer valid and the system diverges exponentially.
 
@@ -413,12 +413,11 @@ s^2 + \left(\frac{z K_D + b}{a}\right)s + \frac{z K_P + c}{a} &= s^2 -(P_1 + P_2
 $$
 
 Since we actually want a PID controller to improve the steady state error, we need to add an additional pole
-$P_I$ so that we can increase the order of the desired closed loop transfer function to 3. This way, we will have an additional term that we can use to derive the integral gain $K_I$. We choose $P_I$ such that it is sufficiently far from $P_1$ and $P_2$ to not affect the transient response. Typically, $P_I \ll -\zeta\omega_n$, at least $5\times$ away. However, if we place it too far away, the integral action will be too slow. After tuning the controller for good performance, I found that putting the pole $2\times$ away from $-\zeta\omega_n$ was a good compromise between speed and stability.
+$P_I$ so that we can increase the order of the desired closed loop transfer function to 3. This way, we will have an additional term that we can use to derive the integral gain $K_I$. We choose $P_I$ such that it is sufficiently far from $P_1$ and $P_2$ to not affect the transient response. Typically, $P_I \ll -\zeta\omega_n$, at least $5\times$ away. However, if we place it too far away, the integral action will be too slow. After tuning the controller for good performance, I found that putting the pole $10\times$ away from $-\zeta\omega_n$ was a good compromise between speed and stability.
 
 $$
 \begin{aligned}
-TODO \\
-P_I &= -\zeta\omega_n \times 2 = -40
+P_I &= -\zeta\omega_n \times 10 = -200
 \end{aligned}
 $$
 
@@ -426,10 +425,9 @@ Using this additional pole, we can update our PID gains in the following way:
 
 $$
 \begin{aligned}
-TODO \\
-\bar{K_P} &= K_P + \frac{a}{z}P_I(P_1 + P_2) &= 68.18 \\
-\bar{K_I} &= -P_I P_1 P_2 \frac{a}{z} &= 1289.15 \\
-\bar{K_D} &= K_D - \frac{a}{z}P_I &= 1.62 \\
+\bar{K_P} &= K_P + \frac{a}{z}P_I(P_1 + P_2) &= 206.03 \\
+\bar{K_I} &= -P_I P_1 P_2 \frac{a}{z} &= 6445.77 \\
+\bar{K_D} &= K_D - \frac{a}{z}P_I &= 5.07 \\
 \end{aligned}
 $$
 
@@ -443,12 +441,25 @@ $$
 
 ## Problem 2.e
 
-The contoller was implemented in simulink with a controller using the PID gains derived in part (d).
-The reference had a maximum slew rate set to $\pm10$ rad/s to prevent the derivative term from causing large control inputs, which is realistic since the reference cannot change instantaneously.
-In addition, a saturation block was added to limit the control input to $[9, -9]V$ to prevent the motor from being overdriven.
+The contoller was implemented in simulink using the PID gains derived in part (d). The system was initialized at the linearization point.
+The following blocks were added to a basic PID controller to ensure stability and performance:
 
-![Simulink model](hw3p2e_sim.png)
+- The reference had a maximum slew rate set to $\pm10$ rad/s to prevent the derivative term from causing large control inputs, which is realistic since the reference cannot change instantaneously.
+- The integral term had a saturation block to prevent windup beyond $\pm100$, which is important since the system is unstable at $\theta = \pi/2$.
+- A saturation block was added to limit the control input to $[9, -9]V$ to prevent the motor from being overdriven.
+
+![Simulink model](figs/hw3p2e_sim.png)
 
 Which was able to follow the reference trajectory while staying within the bounds of $[9, -9]V$.
 
-![Reference tracking with PID controller](hw3p2e.svg)
+![Reference tracking with PID controller](figs/hw3p2e.svg)
+
+We can see that when the reference was set to $\pi/2$, the controller was able to maintain the stable equilibrium with only minor correction and resulted in only minor oscillations. This was difficult to achieve since even small offsets beyond $\pi/2$ can cause the system to diverge when using the linearized dynamics as seen in the impulse response in part (c).
+
+When the reference was set to 0, the controller was again able to keep the system stable, counteracting gravity to maintain the reference position.
+
+The only time we see the controller hit its output limits is when the reference changes from $\pi/2$ to 0 and vice versa, which is expected because those are the transitions that require the most control effort.
+
+Given the design specifications of $t_s < 0.2s$ and $\%OS < 15\%$, we can see that the controller meets these specifications for most of the reference changes except for the initial change from $\theta = \pi/4$ to $\theta = \pi/2$. Here, it achieves a settling time of $350$ and an overshoot of $30\%$.
+
+Hence, we can say that even though we used the linearized dynamics of the system at $\pi/4$ to design the controller, it was able to stabilize the system at $\pi/2$ and 0 as well while meeting the design specifications after initialization.
