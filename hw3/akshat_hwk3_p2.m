@@ -125,7 +125,7 @@ fprintf('Final PID gains:\n KP=%.2f\n KI=%.2f\n KD=%.2f\n', Kp_bar, Ki_bar, Kd_b
 
 %% e: reference tracking for closed loop system after running simulation
 x_s = [pi/2; 0]; % sim init
-
+out = sim('akshat_hwk3_p2_sim.slx', 25);
 fig = figure;
 % hold on;
 plot(out.tout, out.x1.data, 'b', 'LineWidth', 1.5, 'DisplayName', "$\theta$");
@@ -160,12 +160,6 @@ g = 9.81; %m/s^2 acceleration due to gravity
 x1_dot = x(2);
 x2_dot = Kt*u/(Ip*Rm) - (Kt*Kb/Rm + Bm)*x(2)/Ip - mp*g*Lp*cos(x(1))/Ip;
 xdot = [x1_dot; x2_dot];
-end
-
-function y = pendulum_h(t, x, u)
-% x = [theta, theta_dot]
-% u = [V]
-y = x(1);
 end
 
 function A = pendulum_fdx(t, x, u)
