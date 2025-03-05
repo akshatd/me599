@@ -61,7 +61,8 @@ end
 %Plots
 k = (0:L)*Ts; % ...in seconds
 
-figure(1);
+fig = figure(1);
+sgtitle('HW3 P3a: MPC Control')
 
 subplot(3,1,1)
 plot(k,xMPC(1,:),'-',k, xMPC(3,:),'-.','LineWidth',1.5);
@@ -80,11 +81,16 @@ plot(k(1:end-1),uMPC,'LineWidth',1.5);
 title('Control force')
 xlabel('Time (s)'), ylabel('f_s (kN)');
 
+fig.Position(3:4) = [800 800];
+saveas(fig,'figs/hw3p3a.svg');
 %% Simulate LQR and Active Suspension Turned Off
 % Initialization
 % LQR
 xLQR = zeros(n,L+1);
 uLQR = zeros(1,L);
+
+% compute K_opt
+[K_opt,~,~] = dlqr(Ad,Bd,Q,rho);
 
 %Passive Suspension (No Control)
 xNC = zeros(n,L+1);
@@ -99,7 +105,7 @@ s = 0; % Initial s
 for j = 1:L
     
     % LQR Control
-    u = LQRCtrl(x);
+    u = LQRCtrl(x, K_opt);
     uLQR(j) = u;
     x= activeSuspSim (x,u,s,N,totalTime);
     xLQR(:,j+1) = x;
@@ -126,7 +132,8 @@ yNC = Cc*xNC(:,1:end-1) + Dc(:,2)*uNC; % Output
 abNC = yNC(3,:);% Body acceleration
 
 
-figure(2);
+fig = figure(2);
+sgtitle('HW3 P3b: MPC, LQR and Passive Control Comparison');
 
 subplot(4,1,1);
 plot(k,xMPC(1,:),'-',k,xLQR(1,:),'-.',k,xNC(1,:),'--','LineWidth',1.5);
@@ -153,6 +160,8 @@ title('Control force')
 xlabel('time step, k'), ylabel('f_s (kN)');
 legend ('Body acc, MPC','Body acc, LQR', 'Body acc, Passive', 'Location','southeast'); grid on
 
+fig.Position(3:4) = [800 800];
+saveas(fig,'figs/hw3p3b.svg');
 %%
 function u = MPCCtrl(x,d_traj, A_bar, B_bar, E_bar, Q_bar, R_bar)
 % Input:x and road profile
@@ -167,12 +176,12 @@ u = U_k(1);
 
 end
 
-function u = LQRCtrl(x)
-% Incorrect LQR function
+function u = LQRCtrl(x, K_opt)
 % Input:x
 % Output: LQR control input
 
-u = - x(1);
+% u = - x(1);
+u = -K_opt*x;
 
 end
 

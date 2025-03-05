@@ -126,6 +126,8 @@ Then, at every time step, we pick the first element of the optimal control seque
 
 In this formula, only the matrix $\bar{\mathcal{F}_k}$ depends on the current state $x_k$, hence we can pre-compute everything else to get the optimal control sequence efficiently
 
+![MPC Control](figs/hw3p3a.svg)
+
 ## Problem 3.b
 
 The cost function that we want to minimize for LQR is an infinite-horizon quadratic cost function given by
@@ -158,4 +160,15 @@ $$
 -Q = A_d^T P A_d - P - A_d^T P B_d (\rho + B_d^T P B_d)^{-1} B_d^T P A_d
 $$
 
-We can get $K_{opt}$ directly by using MATLAB's `dlqr` function. The optimal control law is then used to compute the control input at every time step.
+We can get $K_{opt}$ directly by using MATLAB's `dlqr` function. This matrix does not depend on the current timestep $k$ and just needs to be computed once. The optimal control law is then used to compute the control input at every time step.
+
+![MPC, LQR, Passive Suspension Conmparison](figs/hw3p3b.svg)
+
+$\pagebreak$
+
+## Problem 3.c
+
+The plots in part (b) show that the active suspension maintains has a lower body travel, body velocity and body acceleration compared to the passive suspension. In addition, the active suspension has significantly more damped profile compared to the passive suspension.
+This will result in a smoother ride for the passenger in the car and the car will regain stability much faster after a disturbance in the road.
+
+When comparing between the active suspension systems, MPC and LQR, we can see that the MPC controller is able to return the body to the nominal position, acceleration and velocity much faster than the LQR controller while having a lot less body travel, velocity and acceleration. This is due to it having the disturbance preview which enables it to predict the disturbances and compensate for them in the control input. However, we can notice that MPC has a higher control effort compared to LQR.
