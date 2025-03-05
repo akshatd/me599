@@ -1,3 +1,6 @@
+%% ME599 HW3 Problem 3
+clc; clear; close all;
+
 % Physical parameters
 mb = 300;    % kg
 mw = 60;     % kg
@@ -7,19 +10,26 @@ kt = 190000; % N/m
 
 % Continuous-time State matrices
 Ac = [ 0 1 0 0; [-ks -bs ks bs]/mb ; ...
-      0 0 0 1; [ks bs -ks-kt -bs]/mw];
+    0 0 0 1; [ks bs -ks-kt -bs]/mw];
 Bc = [ 0 0; 0 10000/mb ; 0 0 ; [kt -10000]/mw];
 Cc = [1 0 0 0; 1 0 -1 0; Ac(2,:)];
 Dc = [0 0; 0 0; Bc(2,:)];
 
+Ts = 0.01; % Sampling time
 
-%Optimization weights
+% Discretize the system
+[Ad, B, Cd, Dd] = c2dm(Ac, Bc, Cc, Dc, 0.01, 'zoh');
+E = B(:,1);
+Bd = B(:,2);
+
+% Optimization weights
 Q =diag([10 1e-2 10 1e-2]);
 rho = 1;
 
-Ts = 0.01; %Sampling time
 N = 50; % Horizon
 
+% precompute matrices
+[A_bar, B_bar, E_bar, Q_bar, R_bar] = MPCMatrices(Ad,Bd,E,Q,rho,N);
 
 % Initialization
 totalTime = 3; %Simulation Time
@@ -35,11 +45,11 @@ u = 0; [~,road_profile]= activeSuspSim (x,u,s,N,totalTime); %inital disturbance 
 
 % Simulation
 for j = 1:L
-
+    
     %MPC Input
-    u = MPCCtrl(x,road_profile);
+    u = MPCCtrl(x, road_profile, A_bar, B_bar, E_bar, Q_bar, R_bar);
     uMPC(j) = u;
-
+    
     % Feed input to simulator
     [x,road_profile]= activeSuspSim (x,u,s,N,totalTime);
     xMPC(:,j+1) = x;
@@ -81,19 +91,19 @@ xNC = zeros(n,L+1);
 uNC = zeros(1,L);
 
 % Initial x
-x = xLQR(:,1); 
+x = xLQR(:,1);
 xnc = xNC(:,1);
 
 s = 0; % Initial s
 
 for j = 1:L
-
+    
     % LQR Control
     u = LQRCtrl(x);
     uLQR(j) = u;
     x= activeSuspSim (x,u,s,N,totalTime);
     xLQR(:,j+1) = x;
-
+    
     %No control
     xnc= activeSuspSim (xnc,0,s,N,totalTime);
     xNC(:,j+1) = xnc;
@@ -123,7 +133,7 @@ plot(k,xMPC(1,:),'-',k,xLQR(1,:),'-.',k,xNC(1,:),'--','LineWidth',1.5);
 xlabel('time step, k'),ylabel('Travel (m)');
 legend ('Body travel, MPC','Body travel, LQR', 'Body travel, Passive')
 title ('Body Travel Comparison')
-% You are to add a plot of the Road Profile to this subplot 
+% You are to add a plot of the Road Profile to this subplot
 
 subplot(4,1,2);
 plot(k,xMPC(2,:),'-',k,xLQR(2,:),'-.',k,xNC(2,:),'--','LineWidth',1.5);
@@ -135,7 +145,7 @@ subplot(4,1,3)
 plot(k(1:end-1),abMPC,'-',k(1:end-1),abLQR,'-.',k(1:end-1),abNC,'--','LineWidth',1.5);
 title('Body Acceleration Comparison')
 xlabel('time step, k'), ylabel('a_b (m/s^2)')
-legend ('Body acc, MPC','Body acc, LQR', 'Body acc, Passive', 'Location','southeast'); 
+legend ('Body acc, MPC','Body acc, LQR', 'Body acc, Passive', 'Location','southeast');
 
 subplot(4,1,4)
 plot(k(1:end-1),uMPC,k(1:end-1),uLQR,k(1:end-1),uNC,'--','LineWidth',1.5);
@@ -144,20 +154,74 @@ xlabel('time step, k'), ylabel('f_s (kN)');
 legend ('Body acc, MPC','Body acc, LQR', 'Body acc, Passive', 'Location','southeast'); grid on
 
 %%
-function u = MPCCtrl(x,d_traj)
-% Incorrect MPC function
+function u = MPCCtrl(x,d_traj, A_bar, B_bar, E_bar, Q_bar, R_bar)
 % Input:x and road profile
 % Output: MPC input
 
-u = -(x(1) + d_traj'*d_traj);
+% u = -(x(1) + d_traj'*d_traj);
+F_k = A_bar*x + E_bar*d_traj;
+U_k = -inv(B_bar'*Q_bar*B_bar + R_bar)*B_bar'*Q_bar*F_k;
+
+% take first control input
+u = U_k(1);
 
 end
 
 function u = LQRCtrl(x)
 % Incorrect LQR function
-% Input:x 
+% Input:x
 % Output: LQR control input
 
 u = - x(1);
+
+end
+
+function [A_bar, B_bar, E_bar, Q_bar, R_bar] = MPCMatrices(A,B,E,Q,R,N)
+nx = size(A,2);
+nu = size(B,2);
+nd = size(E,2);
+
+% initialize matrices
+A_bar = zeros(N*nx,nx);
+B_bar = zeros(N*nx,N*nu);
+E_bar = zeros(N*nx,N*nd);
+Q_bar = zeros(N*nx,N*nx);
+R_bar = zeros(N*nu,N*nu);
+
+% Compute first row of A_bar then use it to initialize the rest
+A_bar(1:nx,:) = A;
+for i = 2:N
+    A_bar((i-1)*nx+1 : i*nx, :) = A_bar((i-2)*nx+1:(i-1)*nx,:)*A;
+end
+
+% Compute first column of B_bar then use it to initialize the rest
+for i = 1:N
+    B_bar((i-1)*nx+1 : i*nx, 1:nu) = A^(i-1)*B;
+end
+for i = 2:N
+    zero_rows = (i-1)*nx;
+    zero_cols = nu;
+    B_bar(:, (i-1)*nu+1 : i*nu) = [zeros(zero_rows,zero_cols); B_bar(1:end-zero_rows, 1:nu)];
+end
+
+% Compute first column of E_bar then use it to initialize the rest
+for i = 1:N
+    E_bar((i-1)*nx+1 : i*nx, 1:nd) = A^(i-1)*E;
+end
+for i = 2:N
+    zero_rows = (i-1)*nx;
+    zero_cols = nd;
+    E_bar(:, (i-1)*nd+1 : i*nd) = [zeros(zero_rows,zero_cols); E_bar(1:end-zero_rows, 1:nd)];
+end
+
+% Compute Q_bar
+for i = 1:N
+    Q_bar((i-1)*nx+1 : i*nx, (i-1)*nx+1 : i*nx) = Q;
+end
+
+% Compute R_bar
+for i = 1:N
+    R_bar((i-1)*nu+1 : i*nu, (i-1)*nu+1 : i*nu) = R;
+end
 
 end
