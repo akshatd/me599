@@ -413,11 +413,13 @@ s^2 + \left(\frac{z K_D + b}{a}\right)s + \frac{z K_P + c}{a} &= s^2 -(P_1 + P_2
 $$
 
 Since we actually want a PID controller to improve the steady state error, we need to add an additional pole
-$P_I$ so that we can increase the order of the desired closed loop transfer function to 3. This way, we will have an additional term that we can use to derive the integral gain $K_I$. We choose $P_I$ such that it is sufficiently far from $P_1$ and $P_2$ to not affect the transient response. Typically, $P_I \ll -\zeta\omega_n$, at least $5\times$ away. However, if we place it too far away, the integral action will be too slow. After tuning the controller for good performance, I found that putting the pole $10\times$ away from $-\zeta\omega_n$ was a good compromise between speed and stability.
+$P_I$ so that we can increase the order of the desired closed loop transfer function to 3. This way, we will have an additional term that we can use to derive the integral gain $K_I$. We choose $P_I$ such that it is a lot smaller than the first pole $P_1$ to ensure that the integral term does not dominate the controller.
 
 $$
 \begin{aligned}
-P_I &= -\zeta\omega_n \times 10 = -200
+P_I &<abs(P_1) \\
+&= 0.5abs(P_1) \\
+&= 19.34
 \end{aligned}
 $$
 
@@ -425,9 +427,9 @@ Using this additional pole, we can update our PID gains in the following way:
 
 $$
 \begin{aligned}
-\bar{K_P} &= K_P + \frac{a}{z}P_I(P_1 + P_2) &= 206.03 \\
-\bar{K_I} &= -P_I P_1 P_2 \frac{a}{z} &= 6445.77 \\
-\bar{K_D} &= K_D - \frac{a}{z}P_I &= 5.07 \\
+\bar{K_P} &= K_P+K_DP_I &= 48.44 \\
+\bar{K_I} &= K_PP_I &= 652.24 \\
+\bar{K_D} &= K_D &= 0.76 \\
 \end{aligned}
 $$
 
@@ -441,11 +443,10 @@ $$
 
 ## Problem 2.e
 
-The contoller was implemented in simulink using the PID gains derived in part (d). The system was initialized at the linearization point.
+The contoller was implemented in simulink using the PID gains derived in part (d). The system was initialized at the equilibrium point $\pi/2$.
 The following blocks were added to a basic PID controller to ensure stability and performance:
 
 - The reference had a maximum slew rate set to $\pm10$ rad/s to prevent the derivative term from causing large control inputs, which is realistic since the reference cannot change instantaneously.
-- The integral term had a saturation block to prevent windup beyond $\pm100$, which is important since the system is unstable at $\theta = \pi/2$.
 - A saturation block was added to limit the control input to $[9, -9]V$ to prevent the motor from being overdriven.
 
 ![Simulink model](figs/hw3p2e_sim.png)
@@ -460,6 +461,6 @@ When the reference was set to 0, the controller was again able to keep the syste
 
 The only time we see the controller hit its output limits is when the reference changes from $\pi/2$ to 0 and vice versa, which is expected because those are the transitions that require the most control effort.
 
-Given the design specifications of $t_s < 0.2s$ and $\%OS < 15\%$, we can see that the controller meets these specifications for most of the reference changes except for the initial change from $\theta = \pi/4$ to $\theta = \pi/2$. Here, it achieves a settling time of $350$ and an overshoot of $30\%$.
+Given the design specifications of $t_s < 0.2s$ and $\%OS < 15\%$, we can see a maximum overshoot of $\approx 10\%$. As for the settling time, due to the slew rate limit, the reference change takes $\approx 0.23s$ and the total settling time including the reference change is $\approx 0.41s$. If we disregard the time taken for the reference change, the controller has a settling time of $\approx 0.18s$ which meets the design specifications.
 
-Hence, we can say that even though we used the linearized dynamics of the system at $\pi/4$ to design the controller, it was able to stabilize the system at $\pi/2$ and 0 as well while meeting the design specifications after initialization.
+Hence, we can say that even though we used the linearized dynamics of the system at $\pi/4$ to design the controller, it was able to stabilize the system at $\pi/2$ and 0 as well while meeting the design specifications.

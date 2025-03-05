@@ -78,8 +78,8 @@ plot_impulse_resp(tspan, y, 'HW3P2c Impulse response (xe2)');
 
 %% d: controller design
 % transfer function
-x_s = [pi/4; 0];
-As = pendulum_fdx(0, x_s, u_e);
+x_c = [pi/4; 0];
+As = pendulum_fdx(0, x_c, u_e);
 syms s
 G_s = C*inv(s*eye(2) - As)*B+D;
 fprintf('The transfer function of the system about the equilibrium point x1=pi/4 is:\n');
@@ -109,16 +109,23 @@ Kp = (a*P1*P2-c)/z;
 fprintf('The desired KP=%.2f, KD=%.2f\n', Kp, Kd);
 
 % add pole for KI and update PID gains
-multiplier = 10;
-PI = -zeta*omega_n * multiplier;
+% multiplier = 10;
+% PI = -zeta*omega_n * multiplier;
+multiplier = 0.5;
+PI = multiplier*abs(P1);
 fprintf('The pole for KI, PI=%.2f\n', PI);
 
-Kp_bar = real(Kp + a/z*PI*(P1+P2));
-Ki_bar = real(-PI*P1*P2*a/z);
-Kd_bar = real(Kd - a/z*PI);
+% Kp_bar = real(Kp + a/z*PI*(P1+P2));
+% Ki_bar = real(-PI*P1*P2*a/z);
+% Kd_bar = real(Kd - a/z*PI);
+Kp_bar = real(Kp + Kd*PI);
+Ki_bar = real(Kp*PI);
+Kd_bar = Kd;
 fprintf('Final PID gains:\n KP=%.2f\n KI=%.2f\n KD=%.2f\n', Kp_bar, Ki_bar, Kd_bar);
 
 %% e: reference tracking for closed loop system after running simulation
+x_s = [pi/2; 0]; % sim init
+
 fig = figure;
 % hold on;
 plot(out.tout, out.x1.data, 'b', 'LineWidth', 1.5, 'DisplayName', "$\theta$");
@@ -133,7 +140,7 @@ ylabel("Voltage (V)");
 xlabel("Time (s)");
 legend('Interpreter', 'latex');
 title('HW3P2e Spotlight Reference Tracking with PID Controller');
-fig.Position(3:4) = [1000 700];
+fig.Position(3:4) = [1500 500];
 saveas(fig, 'figs/hw3p2e', 'svg');
 
 function xdot = pendulum_f(t, x, u)
