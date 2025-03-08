@@ -412,8 +412,20 @@ s^2 + \left(\frac{z K_D + b}{a}\right)s + \frac{z K_P + c}{a} &= s^2 -(P_1 + P_2
 \end{aligned}
 $$
 
-Since we actually want a PID controller to improve the steady state error, we need to add an additional pole
-$P_I$ so that we can increase the order of the desired closed loop transfer function to 3. This way, we will have an additional term that we can use to derive the integral gain $K_I$. We choose $P_I$ such that it is a lot smaller than the first pole $P_1$ to ensure that the integral term does not dominate the controller.
+Giving us the controller
+
+$$
+C(s) = K_P + K_Ds
+$$
+
+Since we actually want a PID controller to improve the steady state error, we need to add an additional
+term $P_I$ so that
+
+$$
+C(s) = (K_P + K_Ds) \frac{(s+P_I)}{s}
+$$
+
+We choose $P_I$ such that it is a lot smaller than the first pole $P_1$ to ensure that the integral term does not dominate the controller.
 
 $$
 \begin{aligned}
@@ -423,7 +435,7 @@ P_I &<abs(P_1) \\
 \end{aligned}
 $$
 
-Using this additional pole, we can update our PID gains in the following way:
+Using this additional term, we can update our PID gains in the following way:
 
 $$
 \begin{aligned}

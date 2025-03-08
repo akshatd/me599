@@ -158,7 +158,7 @@ subplot(4,1,4)
 plot(k(1:end-1),uMPC,k(1:end-1),uLQR,k(1:end-1),uNC,'--','LineWidth',1.5);
 title('Control force')
 xlabel('time step, k'), ylabel('f_s (kN)');
-legend ('Body acc, MPC','Body acc, LQR', 'Body acc, Passive', 'Location','southeast'); grid on
+legend ('Control force, MPC','Control force, LQR', 'Control force, Passive', 'Location','southeast'); grid on
 
 fig.Position(3:4) = [800 800];
 saveas(fig,'figs/hw3p3b.svg');

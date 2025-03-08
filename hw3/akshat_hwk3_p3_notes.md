@@ -162,7 +162,7 @@ $$
 
 We can get $K_{opt}$ directly by using MATLAB's `dlqr` function. This matrix does not depend on the current timestep $k$ and just needs to be computed once. The optimal control law is then used to compute the control input at every time step.
 
-![MPC, LQR, Passive Suspension Conmparison](figs/hw3p3b.svg)
+![MPC, LQR, Passive Suspension Comparison](figs/hw3p3b.svg)
 
 $\pagebreak$
 
