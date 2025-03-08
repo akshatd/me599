@@ -38,10 +38,12 @@ L = totalTime/Ts; % Intervals based on sampling time
 n = size(Ac,2);
 xMPC = zeros(n,L+1); % For storing x
 uMPC = zeros(1,L); % For storing u
+road_profiles = zeros(1,L); % For storing road profile
 
 x = xMPC(:,1); % Initial x
 s = 0; % Initial s
 u = 0; [~,road_profile]= activeSuspSim (x,u,s,N,totalTime); %inital disturbance profile
+road_profiles(1) = road_profile(1);
 
 % Simulation
 for j = 1:L
@@ -53,6 +55,7 @@ for j = 1:L
     % Feed input to simulator
     [x,road_profile]= activeSuspSim (x,u,s,N,totalTime);
     xMPC(:,j+1) = x;
+    road_profiles(j+1) = road_profile(1);
     
     % Increase position by a step
     s = j/10;
@@ -136,9 +139,9 @@ fig = figure(2);
 sgtitle('HW3 P3b: MPC, LQR and Passive Control Comparison');
 
 subplot(4,1,1);
-plot(k,xMPC(1,:),'-',k,xLQR(1,:),'-.',k,xNC(1,:),'--','LineWidth',1.5);
+plot(k,xMPC(1,:),'-',k,xLQR(1,:),'-.',k,xNC(1,:),'--',k,road_profiles,'.','LineWidth',1.5);
 xlabel('time step, k'),ylabel('Travel (m)');
-legend ('Body travel, MPC','Body travel, LQR', 'Body travel, Passive')
+legend ('Body travel, MPC','Body travel, LQR', 'Body travel, Passive', 'Road Profile')
 title ('Body Travel Comparison')
 % You are to add a plot of the Road Profile to this subplot
 
