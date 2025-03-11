@@ -169,8 +169,8 @@ $$
 
 To check stability, we need to find the eigenvalues of the matrix $A_2$
 
-- -2.33
-- -2.33
+- -2.33 + 9.63i
+- -2.33 - 9.63i
 
 Since we have eigenvalues with negative real parts, the equilibrium point is stable. In general, we can say that the equilibrium points
 
