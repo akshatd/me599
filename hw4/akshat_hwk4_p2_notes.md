@@ -36,25 +36,22 @@ J^*(x(k)) = \min_{u(k)} ( G(x(k),u(k)) + J^*(x(k+1)) )
 $$
 
 where $x(k+1) = F(x(k),u(k))$.
-This relationship can be used to compute the optimal control law $u^*(k)$ and the optimal cost function value $J^*(x_0)$ recursively, starting from the final time step and working backwards to the initial time step.
-
-Hence, starting at the final timestep $2N$ and going till the timestep $N$, for the sequence $x(N),\ldots,x(2N)$, we have the optimal cost function:
-
-$$
-J^*(x(N)) = J_2
-$$
+This relationship can be used to compute the optimal control law $u^*(k)$ and the optimal cost function value $J^*(x_0)$ recursively.
 
 For the timestep $k=N-1$, we have:
 
 $$
 \begin{aligned}
 J^*(x(N-1)) &= \min_{u(N-1)} ( G(x(N-1),u(N-1)) + J^*(x(N)) ) \\
-&= \min_{u(N-1)} ( G(x(N-1),u(N-1)) + J_2 ) \\
-\text{for k=N-2, we have:} \\
-J^*(x(N-2)) &= \min_{u(N-2)} ( G(x(N-2),u(N-2)) + J^*(x(N-1)) ) \\
-&= \min_{u(N-2)} ( G(x(N-2),u(N-2)) + G(x(N-1),u(N-1)) + J_2 ) \\
-\text{and so on, until we reach k=0} \\
+&= \min_{u(N-1)} ( G(x(N-1),u(N-1)) + J^*(F(x(N-1),u(N-1))) ) \\
 \end{aligned}
 $$
 
-Here, we can see that for computing the optimal cost for timesteps $N-1$ to $0$, we need to have already computed the optimal cost for timesteps $N$ to $2N$, which is $J_2$. Therefore, even though we can concatenate the optimal control laws for the two subproblems to get the optimal control law for the entire problem, we need to compute the optimal cost function for the second subproblem first before we can compute the optimal cost function for the first subproblem. This means that the two subproblems cannot be solved in parallel, and my colleague's idea will not work.
+We note that the cost from $N$ to $2N$, for the sequence $x(N),\ldots,x(2N)$, we have the optimal cost function:
+
+$$
+J^*(x(N)) = J^*(F(x(N-1),u(N-1))) = J_2
+$$
+
+So even though we might have an expression of the the cost function $J_2$ if we solve recursively from $2N$, it will be in terms of $x(N-1)$ and $u(N-1)$. This means that we will not be able to compute the optimal control law $u^*(k)$ for $k=N \dots 2N$ till we have the actual value of $x(N-1)$ and $u(N-1)$.
+To determine $x(N-1)$ and $u(N-1)$, we need to solve the problem from $0$ to $N-1$ first, and thus it is NOT POSSIBLE to solve the two subproblems in parallel.

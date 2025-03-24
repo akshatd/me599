@@ -84,11 +84,11 @@ while true
 	% u_k = randsample(S,1); % select action randomly
 	u_k = datasample(S(R(x_k, :) ~= -1), 1); % select action randomly from valid actions
 	x_kp1 = u_k; % next state
-	c_k = R(x_k, u_k); % reward
+	r_k = R(x_k, u_k); % reward
 	t = t+1; % increment iteration counter
 	
 	% step 3: update Q-table
-	Q(x_k, u_k) = c_k + gamma * max(Q(x_kp1, :));
+	Q(x_k, u_k) = r_k + gamma * max(Q(x_kp1, :));
 	
 	% step 4: check for max iterations
 	if t > tmax
