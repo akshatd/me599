@@ -5,6 +5,7 @@ bin
 logs
 build
 artefacts
+html
 
 ########################
 # Vim swp files
