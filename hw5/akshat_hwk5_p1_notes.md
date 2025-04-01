@@ -17,9 +17,7 @@ x \\ y \\ z \\ \dot{x} \\ \dot{y} \\ \dot{z} \\ \phi \\ \theta \\ \psi \\ \dot{\
 u = \begin{bmatrix}
 u_1 \\ u_2 \\ u_3 \\ u_4
 \end{bmatrix} \in \mathbb{R}^{4} \\
-n = 12
-,\quad
-m = 4
+\quad n = 12, \quad m = 4
 $$
 
 The dynamics are given by the function $F =$ `aerialVehSim.p` in discrete time for a given time step $Ts$:
@@ -95,7 +93,7 @@ $$
 Defining
 
 $$
-\boldsymbol{z} = \begin{bmatrix}
+\boldsymbol{z}_k = \begin{bmatrix}
 \boldsymbol{x}_k \\ u_k
 \end{bmatrix}
 ,\quad
@@ -108,23 +106,7 @@ $$
 Then,
 
 $$
-\mathcal{Q}(\boldsymbol{x}_k, u_k) = \boldsymbol{z}^T \theta \boldsymbol{z}
-$$
-
-Initially, $P$ will contain some $K \neq K_{opt}$, but after many iterations, once the Q function has converged, the Q function with the optimal policy $u_k = -K_{opt} \boldsymbol{x}_k$ should also converge to the function $V$
-
-$$
-\begin{aligned}
-\mathcal{Q}(\boldsymbol{x}_k, -K_{opt} \boldsymbol{x}_k) &= V(\boldsymbol{x}_k) \\
-\text{Using the definition of the Q function after convergence,} \\
-\mathcal{Q}(\boldsymbol{x}_k, u_k) &= \boldsymbol{x}_k^T Q \boldsymbol{x}_k + u_k^T R u_k + V(\boldsymbol{x}_{k+1}) \\
-&= \boldsymbol{x}_k^T Q \boldsymbol{x}_k + u_k^T R u_k + \mathcal{Q}(\boldsymbol{x}_{k+1}, -K_{opt} \boldsymbol{x}_{k+1}) \\
-\text{Let } \boldsymbol{z}^* &= \begin{bmatrix} \boldsymbol{x}_k \\ u_k^* \end{bmatrix}
-= \begin{bmatrix} \boldsymbol{x}_k \\ -K_{opt} \boldsymbol{x}_k \end{bmatrix} \text{ then,} \\
-&= \boldsymbol{z}_k^T \begin{bmatrix} Q & 0 \\ 0 & R \end{bmatrix} \boldsymbol{z}_k + \boldsymbol{z}_{k+1}^{*T} \Theta \boldsymbol{z}_{k+1}^* \\
-\text{ defining } \bar{Q} &= \begin{bmatrix} Q & 0 \\ 0 & R \end{bmatrix} \\
-&= \boldsymbol{z}_k^T \bar{Q} \boldsymbol{z}_k + \boldsymbol{z}_{k+1}^{*T} \Theta \boldsymbol{z}_{k+1}^*
-\end{aligned}
+\mathcal{Q}(\boldsymbol{x}_k, u_k) = \boldsymbol{z}_k^T \Theta \boldsymbol{z}_k
 $$
 
 And the optimal policy can be obtained by minimizing over the converged Q function:
@@ -164,8 +146,30 @@ $$
 \end{bmatrix}, \text{then, } K_{opt} = \Theta_{uu}^{-1} \Theta_{ux}
 $$
 
+Initially, $P$ will contain some $K \neq K_{opt}$, but after many iterations, once the Q function has converged, the Q function with the optimal policy $u_k = -K_{opt} \boldsymbol{x}_k$ should also converge to the function $V$
+
+$$
+\begin{aligned}
+\mathcal{Q}(\boldsymbol{x}_k, -K_{opt} \boldsymbol{x}_k) &= V(\boldsymbol{x}_k) \\
+\text{Using the definition of the Q function after convergence,} \\
+\mathcal{Q}(\boldsymbol{x}_k, u_k) &= \boldsymbol{x}_k^T Q \boldsymbol{x}_k + u_k^T R u_k + V(\boldsymbol{x}_{k+1}) \\
+&= \boldsymbol{x}_k^T Q \boldsymbol{x}_k + u_k^T R u_k + \mathcal{Q}(\boldsymbol{x}_{k+1}, -K_{opt} \boldsymbol{x}_{k+1}) \\
+\text{Let } \boldsymbol{z}^* &= \begin{bmatrix} \boldsymbol{x}_k \\ u_k^* \end{bmatrix}
+= \begin{bmatrix} \boldsymbol{x}_k \\ -K_{opt} \boldsymbol{x}_k \end{bmatrix} \text{ then,} \\
+&= \boldsymbol{z}_k^T \begin{bmatrix} Q & 0 \\ 0 & R \end{bmatrix} \boldsymbol{z}_k + \boldsymbol{z}_{k+1}^{*T} \Theta \boldsymbol{z}_{k+1}^* \\
+\text{ defining } \bar{Q} &= \begin{bmatrix} Q & 0 \\ 0 & R \end{bmatrix} \\
+&= \boldsymbol{z}_k^T \bar{Q} \boldsymbol{z}_k + \boldsymbol{z}_{k+1}^{*T} \Theta \boldsymbol{z}_{k+1}^*
+\end{aligned}
+$$
+
+Hence
+
+$$
+\mathcal{Q}(\boldsymbol{x}_k, u_k) = \boldsymbol{z}_k^T \Theta \boldsymbol{z}_k = \boldsymbol{z}_k^T \bar{Q} \boldsymbol{z}_k + \boldsymbol{z}_{k+1}^{*T} \Theta \boldsymbol{z}_{k+1}^*
+$$
+
 Now, we just need to find a way to iteratively update $\Theta$ and $K$ so that the Q function converges to the value function and $K$ converges to $K_{opt}$. We can do this by using an off-policy algorithm.
-First, we will need to generate some data using a sequence of control inputs $\{u_k\}_{k=0}^{N-1} = \{u_0 \dots u_{N-1}\}$ where $N \geq (m+1)L - 1$. We generate this by starting at $x_0$ and sequentially applying random control inputs. We could also start at random states and apply random control inputs to capture the next state. This sequence is said to be persistently exciting of order $L$ if the Hankel matrix $H_L(\{u_k\}_{k=0}^{N-1})$ is has full row rank $mL$. Then Hankel matrix is defined as:
+First, we will need to generate some data using a sequence of control inputs $\{u_k\}_{k=0}^{N-1} = \{u_0 \dots u_{N-1}\}$ where $N \geq (m+1)L - 1$. We generate this by starting at $x_0$, sequentially applying random control inputs and capture the next state. This sequence is said to be persistently exciting of order $L$ if the Hankel matrix $H_L(\{u_k\}_{k=0}^{N-1})$ is has full row rank $mL$. Then Hankel matrix is defined as:
 
 $$
 H_L(\{u_k\}_{k=0}^{N-1}) = \begin{bmatrix}
@@ -214,3 +218,45 @@ After iteratively updating $K$ and $\Theta$, we can use the final $K$ as $K_{opt
 
 ![Position Trajectories with optimal control gain](figs/hw5p1a_pos.svg){width=50%}
 ![Velocity Trajectories with optimal control gain](figs/hw5p1a_vel.svg){width=50%}
+
+### Problem 1.b
+
+In the previous part, the $K_{opt}$ we converged to minimized the cost function such that the state $\boldsymbol{x}$ converged to 0. In this part, we want to minimize the cost function such that the state $\boldsymbol{x}$ converges to a desired state $\boldsymbol{\bar{x}}$. The $x,y,z$ of desired state $\boldsymbol{\bar{x}}$ are given as:
+
+$$
+\begin{aligned}
+x = 0.1sin\frac{t}{2} \\
+y = 0.1cos\frac{t}{2} \\
+z = 0.1t \\
+\end{aligned}
+$$
+
+$\boldsymbol{\bar{x}}_k$ at each timestep $k$ can be computed by just taking the discrete timesteps that we are evaluating the cost function at.
+
+The control penalty remains the same and state penalty matrix $Q$ now only penalizes the position error, hence it can be written as:
+
+$$
+Q = \begin{bmatrix}
+10I_{3} & 0 \\
+0 & 0_{9}
+\end{bmatrix}
+$$
+
+The goal is to follow a reference trajectory, so we now start from the first point in the reference trajectory
+
+$$
+\boldsymbol{x}_0 = \begin{bmatrix}
+0 \\ 0.1 \\ 0 \\ 0 \\ 0 \\ 0 \\ 0 \\ 0 \\ 0 \\ 0 \\ 0 \\ 0
+\end{bmatrix}
+$$
+
+We can now use the same reinforcement learning based LQR algorithm as before, but with the updated $Q$.
+Once we have converged to $K_{opt}$, it will drive the positions to 0. To follow the reference trajectory, we can input the difference between the state and the reference trajectory so that $\boldsymbol{x}_k - \boldsymbol{\bar{x}}_k$ converges to 0. Hence, at each timestep $k$, we can compute the control input as:
+
+$$
+u_k = -K_{opt} (\boldsymbol{x}_k - \boldsymbol{\bar{x}}_k) \\
+$$
+
+With these changes, the reference trajectory is followed as shown below:
+
+![Desired and actual maneuver trajectory](figs/hw5p1b_pos.svg){width=50%}
