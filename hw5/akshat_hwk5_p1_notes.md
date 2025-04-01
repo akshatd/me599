@@ -259,4 +259,4 @@ $$
 
 With these changes, the reference trajectory is followed as shown below:
 
-![Desired and actual maneuver trajectory](figs/hw5p1b_pos.svg){width=50%}
+![Desired and actual maneuver trajectory](figs/hw5p1b_pos.svg)
