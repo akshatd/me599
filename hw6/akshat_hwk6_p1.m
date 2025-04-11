@@ -7,9 +7,8 @@ load('freq_resp_data.mat');
 %%
 num_freqs = size(W, 1);
 % order of the system, keep it even
-m = 1;
-n = 2;
-assert(mod(n, 2) == 0, 'n and m must be even');
+m = 2;
+n = 3;
 
 % construct A, b
 % rows: 2*k, one for real and one for imaginary part
@@ -22,7 +21,7 @@ for k=1:num_freqs
 	w = W(k);
 	row_re = zeros(1, size(A, 2));
 	row_im = zeros(1, size(A, 2));
-	for p=0:n-1 % for a
+	for p=0:n-1 % for a coefficients
 		jw_p = (1j * w)^p;
 		if isreal(jw_p)
 			row_re(p+1) = -real(jw_p * GR);
@@ -32,7 +31,7 @@ for k=1:num_freqs
 			row_im(p+1) = -imag(jw_p * GR);
 		end
 	end
-	for p=0:m % for b
+	for p=0:m % for b coefficients
 		jw_p = (1j * w)^p;
 		if isreal(jw_p)
 			row_re(n+p+1) = real(jw_p);
@@ -44,9 +43,16 @@ for k=1:num_freqs
 	idx = (k-1)*2 + 1; % index for real part
 	A(idx, :) = row_re;
 	A(idx+1, :) = row_im;
-	% assumes n is even
-	b(idx) = real((1j * w)^n * GR);
-	b(idx+1) = imag((1j * w)^n * GI);
+	
+	% construct b
+	jw_n = (1j * w)^n;
+	if isreal(jw_n)
+		b(idx) = real(jw_n * GR);
+		b(idx+1) = imag(jw_n * GI);
+	else
+		b(idx) = real(jw_n * GI);
+		b(idx+1) = imag(jw_n * GR);
+	end
 end
 
 % find theta

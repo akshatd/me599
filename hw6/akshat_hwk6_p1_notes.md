@@ -88,9 +88,14 @@ b_m
 \end{bmatrix}
 $$
 
+In the case that $n$ is odd, in the coefficient matrix the coefficient of $a_{n-1}$, $(j \omega)^{n-1} G_R$ would be in the real part and $(j \omega)^{n-1} j G_I$ would be in the imaginary part.
+Similarly for the vector in the RHS, $(j \omega)^n G_I$ would be the real part and $(j \omega)^n G_R$ would be the imaginary part.
+
+In the case that $m$ is odd, in the coefficient matrix the coefficient of $b_{m-1}$, $(j \omega)^{m-1}$ would end up being in the real part and the coefficient of $b_m$, $(j \omega)^m$ would end up being in the imaginary part.
+
 ### Problem 1.b
 
-Stacking the equations from the previous part for multiple frequencies($\omega_1$ to $\omega_k$), we can express the problem as
+Assuming $m$ and $n$ are even, we can stack the equations from the previous part for multiple frequencies($\omega_1$ to $\omega_k$), and express the problem as
 
 $$
 \underbrace{
@@ -127,7 +132,13 @@ b_m
 }_{b}
 $$
 
-and solve for the coeffients $a_i$ and $b_i$ using the least squares method.
+If either $m$ or $n$ is odd, we can follow the same rules as defined at the end of part (a) to change the matrices $A$ and $b$.
+
+and solve for the coeffients $a_i$ and $b_i$ in $\theta$ using the least squares method, where
+
+$$
+\theta^* = (A^TA)^{-1}A^Tb
+$$
 
 ### Problem 1.c
 
@@ -144,10 +155,18 @@ G_I &= \text{amplitude} \cdot \sin(\text{phase offset})
 \end{aligned}
 $$
 
-We can construct the $A$ and $b$ matrices as described above, but in a programmatic way that allows us to input odd values of $m$ and solve for $\theta$ to find the model of the system. After trying a few values of $m$ and $n$, we can see that only the 3 highest coefficients of the denominator and the 2 highest coefficients of the numerator are significant, and the rest are negligible. Hence, we determine that the system is a 2nd order with $m=1$ and $n=2$.
+We can construct the $A$ and $b$ matrices as described above, but in a programmatic way that allows us to input odd values of $m$ and $n$ and solve for $\theta$ to find the model of the system.
+
+We can then loop over multiple values of $m$ and $n$, making sure we only try values that make the transfer function proper $m \leq n$ to find the values that provide the best fit to the data.
 
 $$
-G(s) = \frac{s + 4.289}{s^2 - 3.126 s + 11.13}
+||A \theta - b||_2^2
+$$
+
+The best fit is obtained for $m=2$ and $n=3$, which gives us the transfer function
+
+$$
+G(s) = \frac{s^2 + 10 s + 10}{s^3 + s^2 + 0.2 s + 40}
 $$
 
 And the bode plot of the system is
