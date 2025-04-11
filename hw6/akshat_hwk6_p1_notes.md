@@ -95,7 +95,7 @@ In the case that $m$ is odd, in the coefficient matrix the coefficient of $b_{m-
 
 ### Problem 1.b
 
-Assuming $m$ and $n$ are even, we can stack the equations from the previous part for multiple frequencies($\omega_1$ to $\omega_k$), and express the problem as
+Assuming $m$ and $n$ are even, we can stack the equations from the previous part for multiple frequencies($\omega_1$ to $\omega_k$), where $G(j \omega_k) = G_R(\omega_k) + jG_I(\omega_k)$ is given and express the problem as
 
 $$
 \underbrace{
@@ -134,15 +134,21 @@ $$
 
 If either $m$ or $n$ is odd, we can follow the same rules as defined at the end of part (a) to change the matrices $A$ and $b$.
 
-and solve for the coeffients $a_i$ and $b_i$ in $\theta$ using the least squares method, where
+We solve for the coeffients $a_i$ and $b_i$ in $\theta$ using the least squares method, where
 
 $$
 \theta^* = (A^TA)^{-1}A^Tb
 $$
 
+$\pagebreak$
+
 ### Problem 1.c
 
 The MATLAB scrpt is included as an appendix, and constructs the matrices $A$ and $b$ as described above, then solves for $\theta$ using the least squares method.
+
+![Code](figs/hw6p1c.png){width=52%}
+
+$\pagebreak$
 
 ### Problem 1.d
 
@@ -157,18 +163,33 @@ $$
 
 We can construct the $A$ and $b$ matrices as described above, but in a programmatic way that allows us to input odd values of $m$ and $n$ and solve for $\theta$ to find the model of the system.
 
-We can then loop over multiple values of $m$ and $n$, making sure we only try values that make the transfer function proper $m \leq n$ to find the values that provide the best fit to the data.
+We can then loop over multiple values of $m$ and $n$, making sure we only try values that make the transfer function proper $m \leq n$ to find the values that provide the best fit to the data, which are values that minimize
 
 $$
 ||A \theta - b||_2^2
 $$
 
-The best fit is obtained for $m=2$ and $n=3$, which gives us the transfer function
+If we vary $m$ and $n$ between 1 to 6, we find that there is a good fit for multiple $m$ and $n$ values(in bold):
+
+|     | n=1         | n=2          | n=3               | n=4           | n=5           | n=6           |
+| --- | ----------- | ------------ | ----------------- | ------------- | ------------- | ------------- |
+| m=1 | 9.3089e+000 | 15.2356e+000 | 993.8861e+003     | 583.3088e+006 | 214.0905e+009 | 49.7797e+012  |
+| m=2 | Inf         | 14.9863e+000 | **237.7279e-012** | 583.3088e+006 | 214.0905e+009 | 49.7797e+012  |
+| m=3 | Inf         | Inf          | **179.9161e-012** | 138.0471e-009 | 214.0905e+009 | 49.7797e+012  |
+| m=4 | Inf         | Inf          | Inf               | 122.6861e-009 | 125.4958e-006 | 49.7797e+012  |
+| m=5 | Inf         | Inf          | Inf               | Inf           | 255.8723e+000 | 4.9544e-003   |
+| m=6 | Inf         | Inf          | Inf               | Inf           | Inf           | 118.4789e+003 |
+
+We select $m=2$ and $n=3$, since it is the smallest order that gives us a good fit. This gives us the transfer function
 
 $$
 G(s) = \frac{s^2 + 10 s + 10}{s^3 + s^2 + 0.2 s + 40}
 $$
 
-And the bode plot of the system is
+And the bode plot of the approximated system along with the data is
+
+$\pagebreak$
 
 ![HW6 P1d Bode plot of approximate system](figs/hw6p1d_bode.svg)
+
+The approximated system matches our data quite well as seen in the plot, and hence we can conclude that our system identification is correct.
