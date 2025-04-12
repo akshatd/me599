@@ -110,6 +110,6 @@ function model = getModelFromTheta(m, theta)
 % tf needs higher orders first, so enumerate backwards
 theta = flip(theta);
 numerator = theta(1:m+1)'; % for b's
-denominator = [1, theta(m++2:end)']; % for a's, add 1 as highest order coefficient
+denominator = [1, theta(m+2:end)']; % for a's, add 1 as highest order coefficient
 model = tf(numerator, denominator);
 end

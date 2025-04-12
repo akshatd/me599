@@ -89,9 +89,46 @@ b_m
 $$
 
 In the case that $n$ is odd, in the coefficient matrix the coefficient of $a_{n-1}$, $(j \omega)^{n-1} G_R$ would be in the real part and $(j \omega)^{n-1} j G_I$ would be in the imaginary part.
-Similarly for the vector in the RHS, $(j \omega)^n G_I$ would be the real part and $(j \omega)^n G_R$ would be the imaginary part.
+Similarly for the vector in the RHS, $(j \omega)^n G_I$ would be the real part and $(j \omega)^n G_R$ would be the imaginary part. The real part would change to
+
+$$
+\begin{aligned}
+a_0 G_R - a_1 \omega G_I - a_2 \omega^2 G_R + \ldots + a_{n-1}(j \omega)^{n-1} G_R + (j \omega)^n G_I  = b_0 - b_2 \omega^2 + b_4 \omega^4 + \ldots + b_m (j \omega)^m \\
+-a_0 G_R + a_1 \omega G_I + a_2 \omega^2 G_R + \ldots - a_{n-1}(j \omega)^{n-1} G_R + b_0 - b_2 \omega^2 + b_4 \omega^4 + \ldots + b_m (j \omega)^m = (j \omega)^n G_I
+\end{aligned}
+$$
+
+Similarly, the imaginary part can be expressed as
+
+$$
+\begin{aligned}
+a_0 G_I + a_1 \omega G_R - a_2 \omega^2 G_I + \ldots + a_{n-1}(j \omega)^{n-1} jG_I + (j \omega)^n G_R = b_1 \omega - b_3 \omega^3 + \ldots + b_{m-1} (j \omega)^{m-1} \\
+-a_0 G_I - a_1 \omega G_R + a_2 \omega^2 G_I + \ldots - a_{n-1}(j \omega)^{n-1} jG_I + b_1 \omega - b_3 \omega^3 + \ldots + b_{m-1} (j \omega)^{m-1} = (j \omega)^n G_R
+\end{aligned}
+$$
 
 In the case that $m$ is odd, in the coefficient matrix the coefficient of $b_{m-1}$, $(j \omega)^{m-1}$ would end up being in the real part and the coefficient of $b_m$, $(j \omega)^m$ would end up being in the imaginary part.
+The real part can be expressed as
+
+$$
+\begin{aligned}
+a_0 G_R - a_1 \omega G_I - a_2 \omega^2 G_R + \ldots + a_{n-1}(j \omega)^{n-1} jG_I + (j \omega)^n G_R = b_0 - b_2 \omega^2 + b_4 \omega^4 + \ldots + b_{m-1} (j \omega)^{m-1} \\
+-a_0 G_R + a_1 \omega G_I + a_2 \omega^2 G_R + \ldots - a_{n-1}(j \omega)^{n-1} jG_I + b_0 - b_2 \omega^2 + b_4 \omega^4 + \ldots + b_{m-1} (j \omega)^{m-1} = (j \omega)^n G_R
+\end{aligned}
+$$
+
+Similarly, the imaginary part can be expressed as
+
+$$
+\begin{aligned}
+a_0 G_I + a_1 \omega G_R - a_2 \omega^2 G_I + \ldots + a_{n-1}(j \omega)^{n-1} G_R + (j \omega)^n G_I = b_1 \omega - b_3 \omega^3 + \ldots + b_m (j \omega)^m \\
+-a_0 G_I - a_1 \omega G_R + a_2 \omega^2 G_I + \ldots - a_{n-1}(j \omega)^{n-1} G_R + b_1 \omega - b_3 \omega^3 + \ldots + b_m (j \omega)^m = (j \omega)^n G_I
+\end{aligned}
+$$
+
+In case both $m$ and $n$ are odd, we can follow the same rules as defined above to change the matrices and the vector in the RHS.
+
+Hence, we can use the above equations to construct matrices that equate the real and imaginary parts to each other and solve them to get the least squares solution.
 
 ### Problem 1.b
 
