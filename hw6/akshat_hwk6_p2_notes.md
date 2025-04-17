@@ -112,6 +112,8 @@ We can see that both the manual and MATLAB ARX methods give us a very good appro
 - Manual ARX($||P-P_{manual}||_2$): 0.134917
 - MATLAB ARX($||P-P_{matlab}||_2$): 0.134917
 
+$\pagebreak$
+
 ### Problem 2.b
 
 For this problem, we want to design a controller such that the system produces the desred pressure wave `P_ref.mat`. We start by constructing a state space representation and then making an impulse response matrix to solve the least squares solution to compute the best control input $V^*(t)$.
